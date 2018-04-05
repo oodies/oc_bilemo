@@ -9,11 +9,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
+ *
  */
 class Product
 {
@@ -34,6 +36,8 @@ class Product
      *              "comment"="Contains the ID of the product"
      *     }
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $idProduct;
 
@@ -56,6 +60,8 @@ class Product
      *     max="255",
      *     maxMessage="product.name.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $name;
 
@@ -75,6 +81,8 @@ class Product
      *     max="64",
      *     maxMessage="product.code.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $code;
 
@@ -88,6 +96,8 @@ class Product
      *     nullable=true,
      *     options={"comment"="Contains the description of the product"}
      * )
+     *
+     * @Serializer\Groups({"Details"})
      */
     protected $description;
 
@@ -104,6 +114,8 @@ class Product
      * )
      *
      * @Assert\DateTime( message="product.create_at.date_time")
+     *
+     * @Serializer\Groups({"Details"})
      */
     protected $createAt;
 
@@ -120,6 +132,8 @@ class Product
      * )
      *
      * @Assert\DateTime( message="product.update_at.date_time")
+     *
+     * @Serializer\Groups({"Details"})
      */
     protected $updateAt;
 
@@ -143,6 +157,8 @@ class Product
      * )
      *
      * @Assert\Valid()
+     *
+     * @Serializer\Groups({"Details"})
      */
     protected $brand;
 

@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -35,6 +36,8 @@ class Address
      *
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $idAddress;
 
@@ -55,6 +58,8 @@ class Address
      *          max="255",
      *          maxMessage="address.street_address.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $streetAddress;
 
@@ -75,6 +80,8 @@ class Address
      *          max="70",
      *          maxMessage="address.city.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $city;
 
@@ -95,6 +102,8 @@ class Address
      *          max="10",
      *          maxMessage="address.postcode.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $postcode;
 

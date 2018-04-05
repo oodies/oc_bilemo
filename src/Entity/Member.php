@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -33,6 +34,8 @@ class Member extends Person
      * )
      *
      * @Assert\Valid()
+     *
+     * @Serializer\Groups({"Customer"})
      */
     protected $customer;
 

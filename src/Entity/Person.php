@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -40,6 +41,8 @@ abstract class Person
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $idPerson;
 
@@ -61,6 +64,8 @@ abstract class Person
      *     max=80,
      *     maxMessage="user.firstname.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $firstname;
 
@@ -81,6 +86,8 @@ abstract class Person
      *     max=80,
      *     maxMessage="user.lastname.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $lastname;
 
@@ -101,6 +108,8 @@ abstract class Person
      *     max="30",
      *     maxMessage="person.cell_phone.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $cellPhone;
 
@@ -125,6 +134,8 @@ abstract class Person
      * )
      *
      * @Assert\Valid()
+     *
+     * @Serializer\Groups({"Details"})
      */
     protected $address;
 

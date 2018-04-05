@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -46,6 +47,8 @@ class Customer extends Person
      *      max="14",
      *      maxMessage="customer.siret.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     protected $siret;
 

@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +42,8 @@ class Brand
      * )
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"Default"})
      */
     private $idBrand;
 
@@ -65,6 +68,8 @@ class Brand
      *          max="255",
      *          maxMessage="brand.name.max_length"
      * )
+     *
+     * @Serializer\Groups({"Default"})
      */
     private $name;
 
