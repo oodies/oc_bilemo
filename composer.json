@@ -9,6 +9,7 @@
         "fzaninotto/faker": "^1.7",
         "jms/serializer-bundle": "^2.3",
         "nelmio/api-doc-bundle": "^3.2",
+        "sensio/framework-extra-bundle": "^5.1",
         "symfony/console": "^4.0",
         "symfony/flex": "^1.0",
         "symfony/framework-bundle": "^4.0",
