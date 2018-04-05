@@ -6,6 +6,7 @@
         "doctrine/doctrine-bundle": "^1.8",
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "friendsofsymfony/rest-bundle": "^2.3",
+        "fzaninotto/faker": "^1.7",
         "jms/serializer-bundle": "^2.3",
         "nelmio/api-doc-bundle": "^3.2",
         "symfony/console": "^4.0",
