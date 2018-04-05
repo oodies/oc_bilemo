@@ -23,7 +23,7 @@ class Member extends Person
     /**
      * @var customer
      *
-     * @ORM\OneToOne(
+     * @ORM\ManyToOne(
      *     targetEntity="App\Entity\Customer"
      * )
      * @ORM\JoinColumn(
