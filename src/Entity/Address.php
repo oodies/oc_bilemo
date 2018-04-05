@@ -39,24 +39,24 @@ class Address
     protected $idAddress;
 
     /**
-     * Contains the full address without city and postal code
+     * Contains the full street address without city and postal code
      *
      * @var string|null
      *
      * @ORM\Column(
-     *      name="name",
+     *      name="street_address",
      *      type="string",
      *      length=255,
      *      nullable=true,
-     *      options={"comment"="Contains the full address without city and postal code"}
+     *      options={"comment"="Contains the full street address without city and postal code"}
      * )
      *
      * @Assert\Length(
      *          max="255",
-     *          maxMessage="address.name.max_length"
+     *          maxMessage="address.street_address.max_length"
      * )
      */
-    protected $name;
+    protected $streetAddress;
 
     /**
      * Contains the city of the address
@@ -79,24 +79,24 @@ class Address
     protected $city;
 
     /**
-     * Contains the postal code of the address
+     * Contains the postcode of the address
      *
      * @var string|null
      *
      * @ORM\Column(
-     *      name="postal_code",
+     *      name="postcode",
      *      type="string",
      *      length=10,
      *      nullable=true,
-     *      options={"comment"="Contains the postal code of the address"}
+     *      options={"comment"="Contains the postcode of the address"}
      * )
      *
      * @Assert\Length(
      *          max="10",
-     *          maxMessage="address.postal_code.max_length"
+     *          maxMessage="address.postcode.max_length"
      * )
      */
-    protected $postalCode;
+    protected $postcode;
 
     /** *******************************
      * GETTER / SETTER
@@ -113,9 +113,9 @@ class Address
     /**
      * @return null|string
      */
-    public function getName(): ?string
+    public function getStreetAddress(): ?string
     {
-        return $this->name;
+        return $this->streetAddress;
     }
 
     /**
@@ -123,9 +123,9 @@ class Address
      *
      * @return Address
      */
-    public function setName(?string $name): Address
+    public function setStreetAddress(?string $name): Address
     {
-        $this->name = $name;
+        $this->streetAddress = $name;
         return $this;
     }
 
@@ -151,19 +151,19 @@ class Address
     /**
      * @return null|string
      */
-    public function getPostalCode(): ?string
+    public function getPostcode(): ?string
     {
-        return $this->postalCode;
+        return $this->postcode;
     }
 
     /**
-     * @param null|string $postalCode
+     * @param null|string $postcode
      *
      * @return Address
      */
-    public function setPostalCode(?string $postalCode): Address
+    public function setPostcode(?string $postcode): Address
     {
-        $this->postalCode = $postalCode;
+        $this->postcode = $postcode;
         return $this;
     }
 }
