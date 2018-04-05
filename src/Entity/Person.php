@@ -92,13 +92,13 @@ abstract class Person
      * @ORM\Column(
      *     name="cell_phone",
      *     type="string",
-     *     length=15,
+     *     length=30,
      *     nullable=true,
      *     options={"comment":"Contains the cell phone of the person"}
      * )
      *
      * @Assert\Length(
-     *     max="15",
+     *     max="30",
      *     maxMessage="person.cell_phone.max_length"
      * )
      */
