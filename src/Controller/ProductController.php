@@ -61,6 +61,18 @@ class ProductController extends Controller
     }
 
     /**
+     * View the details of the product
+     *
+     * @Rest\Get("/products/{idProduct}")
+     *
+     * @Rest\View(serializerGroups={"Default", "Details"})
+     */
+    public function getAction($idProduct)
+    {
+        return $this->_getRepository()->find($idProduct);
+    }
+
+    /**
      *
      * @throws \LogicException
      *
