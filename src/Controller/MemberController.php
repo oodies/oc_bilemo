@@ -15,7 +15,6 @@ use App\Services\Paginate\Member as PaginateMember;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
-use JMS\Serializer\Annotation\Type;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,12 +26,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class MemberController extends Controller
 {
-
-    /**
-     * @Type("array<App\Entity\Member>")
-     */
-    protected $data;
-
     /**
      * Consult the list of registered members linked to a customer
      *
@@ -73,6 +66,18 @@ class MemberController extends Controller
         );
 
         return new PaginateMember($pager);
+    }
+
+    /**
+     * View the details of a member
+     *
+     * @Rest\Get("/members/{idMember}")
+     *
+     * @Rest\View(serializerGroups={"Default", "Details"})
+     */
+    public function getAction($idMember)
+    {
+        return $this->_getRepository()->find($idMember);
     }
 
     /**
