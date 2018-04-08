@@ -17,3 +17,5 @@ fos_rest:
   view:
     formats: { json: true, xml: false, rss: false }
     view_response_listener:  true
+  #
+  param_fetcher_listener: true
