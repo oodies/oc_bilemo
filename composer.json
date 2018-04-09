@@ -18,7 +18,8 @@
         "symfony/lts": "^4@dev",
         "symfony/orm-pack": "^1.0",
         "symfony/validator": "^4.0",
-        "symfony/yaml": "^4.0"
+        "symfony/yaml": "^4.0",
+        "willdurand/hateoas-bundle": "^1.4"
     },
     "require-dev": {
         "symfony/asset": "^4.0",
