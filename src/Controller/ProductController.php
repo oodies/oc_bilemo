@@ -30,7 +30,10 @@ class ProductController extends Controller
     /**
      * Consult the list of products
      *
-     * @Rest\Get("/api/products")
+     * @Rest\Get(
+     *     path="/api/products",
+     *     name="app_api_product_cget"
+     *     )
      *
      * @param ParamFetcherInterface $paramFetcher
      *
@@ -75,7 +78,11 @@ class ProductController extends Controller
     /**
      * View the details of the product
      *
-     * @Rest\Get("/api/products/{idProduct}")
+     * @Rest\Get(
+     *     path="/api/products/{idProduct}",
+     *     name="app_api_product_get",
+     *     requirements={"idProduct"="\d+"}
+     * )
      *
      * @param $idProduct
      *

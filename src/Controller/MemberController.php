@@ -37,7 +37,11 @@ class MemberController extends Controller
     /**
      * Consult the list of registered members linked to a customer
      *
-     * @Rest\Get("/api/customer/{idCustomer}/members")
+     * @Rest\Get(
+     *     path="/api/customer/{idCustomer}/members",
+     *     name="app_api_member_cget",
+     *     requirements={"idCustomer"="\d+"}
+     * )
      *
      * @SWG\Response(
      *     response="200",
@@ -88,7 +92,11 @@ class MemberController extends Controller
     /**
      * View the details of a member
      *
-     * @Rest\Get("/api/members/{idMember}")
+     * @Rest\Get(
+     *     path="/api/members/{idMember}",
+     *     name="app_api_member_get",
+     *     requirements={"idMember"="\d+" }
+     * )
      *
      * @param $idMember
      *

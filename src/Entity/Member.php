@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,6 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="member")
  * @ORM\Entity(repositoryClass="App\Repository\MemberRepository")
  *
+ * @Hateoas\Relation(
+ *     "self",
+ *     href = @Hateoas\Route("app_api_member_get",
+ *            absolute=true,
+ *            parameters={ "idMember" = "expr(object.getIdPerson())" }
+ *     ) )
  */
 class Member extends Person
 {

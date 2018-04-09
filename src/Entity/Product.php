@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,6 +17,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  *
+ * @Hateoas\Relation(
+ *     "self",
+ *     href = @Hateoas\Route("app_api_product_get",
+ *            absolute=true,
+ *            parameters={ "idProduct" = "expr(object.getIdProduct())" }
+ *     ) )
  */
 class Product
 {
