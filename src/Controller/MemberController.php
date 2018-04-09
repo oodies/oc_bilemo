@@ -12,12 +12,14 @@ use App\Entity\Customer;
 use App\Entity\Member;
 use App\Repository\MemberRepository;
 use App\Services\Paginate\Member as PaginateMember;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Swagger\Annotations as SWG;
 
 /**
  * Class MemberController
@@ -29,7 +31,16 @@ class MemberController extends Controller
     /**
      * Consult the list of registered members linked to a customer
      *
-     * @Rest\Get("/customer/{idCustomer}/members")
+     * @Rest\Get("/api/customer/{idCustomer}/members")
+     *
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @SWG\Schema(
+     *          type="array",
+     *          @SWG\Items(ref=@Model(type=Member::class, groups={"Default"} ))
+     *     )
+     * )
      *
      * @param Customer              $customer
      * @param ParamFetcherInterface $paramFetcher
@@ -71,9 +82,21 @@ class MemberController extends Controller
     /**
      * View the details of a member
      *
-     * @Rest\Get("/members/{idMember}")
+     * @Rest\Get("/api/members/{idMember}")
+     *
+     * @param $idMember
+     *
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @Model(type=Member::class, groups={"Default", "Details"} )
+     * )
      *
      * @Rest\View(serializerGroups={"Default", "Details"})
+     *
+     * @throws \LogicException
+     *
+     * @return Member|null|object
      */
     public function getAction($idMember)
     {
