@@ -1,21 +1,155 @@
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
 fos_rest:
-  routing_loader:
-    include_format: false
-    default_format: json
   #
-  format_listener:
-    rules:
-      - { path: ^/, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
+  disable_csrf_role: null
+  #
+  access_denied_listener:
+      enabled: false
+      service: null
+      formats:
+          # Prototype
+          name: ~
+  #
+  unauthorized_challenge: null
+  #
+  param_fetcher_listener:
+      enabled: true # Default false
+      force: false
+      service: null
+  #
+  cache_dir: '%kernel.cache_dir%/fos_rest'
+  #
+  allowed_methods_listener:
+      enabled: false
+      service: null
+  #
+  routing_loader:
+      default_format: json # default null
+      prefix_methods: true
+      include_format: true
   #
   body_converter:
-    enabled: true
+      enabled: true # default false
+      validate: true # default false
+      validation_errors_argument: validationErrors
+  #
+  service:
+      router: router
+      templating: templating
+      serializer: null
+      view_handler: fos_rest.view_handler.default
+      inflector: fos_rest.inflector.doctrine
+      validator: validator
   #
   serializer:
-    serialize_null: true
+      version: null
+      groups: []
+      serialize_null: true # default false
+  #
+  zone:
+      # Prototype
+      -
+          # use the urldecoded format
+          path: null # Example: ^/path to resource/
+          host: null
+          methods: []
+          ips: []
   #
   view:
-    formats: { json: true, xml: false, rss: false }
-    view_response_listener:  true
+      default_engine:       twig
+      force_redirects:
+          # Prototype
+          # name: ~
+      mime_types:
+          enabled: false
+          service: null
+          formats:
+              # Prototype
+              name: []
+      formats: { json: true, xml: false, rss: false }
+      templating_formats:
+          # Prototype
+          name:                 ~
+      view_response_listener:
+          enabled: true # default false
+          force: true # default false
+          service: null
+      failed_validation:    400
+      empty_content:        204
+      serialize_null:       false
+      jsonp_handler:
+          callback_param:       callback
+          mime_type:            application/javascript+jsonp
   #
-  param_fetcher_listener: true
+  exception:
+      enabled:              false
+      exception_controller: null
+      service:              null
+      codes:
+      messages:
+      debug:                true
+  #
+  body_listener:
+      enabled: true
+      service: null
+      default_format: null
+      throw_exception_on_unsupported_content_type: false
+      decoders:
+          # Prototype
+          #name:                 ~
+      array_normalizer:
+          service: null
+          forms: false
+  #
+  format_listener:
+      enabled:              true
+      service:              null
+      rules:
+          # Prototype
+#          -
+#              # URL path info
+#              path:                 null
+#              # URL host name
+#              host:                 null
+#              # Method for URL
+#              methods:              null
+#              attributes:
+#                  # Prototype
+#                  name:                 ~
+#              stop:                 false
+#              prefer_extension:     true
+#              fallback_format:      html
+#              priorities:           []
+          -
+              # URL path info
+              path: ^/api
+              # URL host name
+              host:                 null
+              # Method for URL
+              methods:              null
+              attributes:
+                  # Prototype
+                  name:                 ~
+              stop: false
+              prefer_extension: true
+              fallback_format: json
+              priorities: [ json, html ]
+  #
+  versioning:
+      enabled: false
+      default_version: null
+      resolvers:
+          query:
+              enabled: true
+              parameter_name: version
+          custom_header:
+              enabled: true
+              header_name: X-Accept-Version
+          media_type:
+              enabled: true
+              regex: '/(v|version)=(?P<version>[0-9\.]+)/'
+      guessing_order:
+          # Defaults:
+          - query
+          - custom_header
+          - media_type

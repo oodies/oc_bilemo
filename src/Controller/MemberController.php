@@ -10,16 +10,22 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\Member;
+use App\Form\MemberType;
 use App\Repository\MemberRepository;
 use App\Services\Paginate\Member as PaginateMember;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\View\View as RestView;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Swagger\Annotations as SWG;
+use Symfony\Component\Validator\ConstraintViolationList;
+
 
 /**
  * Class MemberController
@@ -101,6 +107,56 @@ class MemberController extends Controller
     public function getAction($idMember)
     {
         return $this->_getRepository()->find($idMember);
+    }
+
+    /**
+     * Create a new member link to customer
+     *
+     * @Rest\Post("/api/customer/{idCustomer}/members")
+     *
+     * @param  Customer                $customer
+     * @param  ConstraintViolationList $validationError
+     *
+     * @ParamConverter("customer", options={"id"="idCustomer"})
+     *
+     * @SWG\Parameter(
+     *     in="formData",
+     *     name="member",
+     *     type="array",
+     *     @Model(type=MemberType::class)
+     * )
+     * @SWG\Response(
+     *     response="201",
+     *     description="Create successfully",
+     *       @Model(type=Member::class, groups={"Default"} )
+     * )
+     *
+     * @Rest\View(serializerGroups={"Default"})
+     *
+     * TODO to finish
+     */
+    public function newAction(Request $request, Customer $customer)
+    {
+        $member = new Member();
+        $form = $this->createForm(MemberType::class, $member);
+        $form->submit($request->request->all());
+
+        if ($form->isValid()) {
+            $member->setCustomer($customer);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($member);
+            $em->flush();
+
+            return RestView::create(
+                ['resource' => $member],
+                Response::HTTP_CREATED
+            );
+        } else {
+            return RestView::create(
+                [],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     /**
