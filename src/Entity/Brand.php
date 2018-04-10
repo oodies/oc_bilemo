@@ -9,6 +9,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,12 +17,36 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class BrandRepository
  *
- * @package App\Entity\Product
+ * @package App\Entity
  *
  * @ORM\Table(name="brand")
  * @ORM\Entity(repositoryClass="App\Repository\BrandRepository")
  *
  * @UniqueEntity("name", message="brand.name.unique_entity")
+ *
+ * @Hateoas\Relation(
+ *     "self",
+ *     href = @Hateoas\Route("app_api_brand_get",
+ *            parameters={ "idBrand" = "expr(object.getIdBrand())" },
+ *            absolute=true,
+ *           )
+ * )
+ *
+ * @Hateoas\Relation(
+ *     "modify",
+ *     href = @Hateoas\Route("app_api_brand_put",
+ *            parameters={ "idBrand" = "expr(object.getIdBrand())" },
+ *            absolute=true,
+ *           )
+ * )
+ *
+ * @Hateoas\Relation(
+ *     "delete",
+ *     href = @Hateoas\Route("app_api_brand_delete",
+ *            parameters={ "idBrand" = "expr(object.getIdBrand())" },
+ *            absolute=true
+ *          )
+ * )
  */
 class Brand
 {

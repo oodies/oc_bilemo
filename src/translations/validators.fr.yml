@@ -1,0 +1,4 @@
+brand:
+  name:
+    not_blank: "Valeur requise"
+    max_length: "{{ limit }} caractères au maximum"
