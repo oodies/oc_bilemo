@@ -37,6 +37,7 @@ class Address
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $idAddress;
@@ -59,6 +60,7 @@ class Address
      *          maxMessage="address.street_address.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $streetAddress;
@@ -81,6 +83,7 @@ class Address
      *          maxMessage="address.city.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $city;
@@ -103,6 +106,7 @@ class Address
      *          maxMessage="address.postcode.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $postcode;

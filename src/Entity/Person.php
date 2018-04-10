@@ -42,6 +42,7 @@ abstract class Person
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $idPerson;
@@ -65,6 +66,7 @@ abstract class Person
      *     maxMessage="user.firstname.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $firstname;
@@ -87,6 +89,7 @@ abstract class Person
      *     maxMessage="user.lastname.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $lastname;
@@ -109,6 +112,7 @@ abstract class Person
      *     maxMessage="person.cell_phone.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $cellPhone;
@@ -135,6 +139,7 @@ abstract class Person
      *
      * @Assert\Valid()
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Details"})
      */
     protected $address;

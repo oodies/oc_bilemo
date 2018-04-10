@@ -61,11 +61,12 @@ fos_rest:
           # Prototype
           # name: ~
       mime_types:
-          enabled: false
+          enabled: true # default false
           service: null
           formats:
               # Prototype
-              name: []
+              #name: []
+              json: ['application/json', 'application/json;version=1.0', 'application/json;version=2.0' ]
       formats: { json: true, xml: false, rss: false }
       templating_formats:
           # Prototype
@@ -136,8 +137,8 @@ fos_rest:
               priorities: [ json, html ]
   #
   versioning:
-      enabled: false
-      default_version: null
+      enabled: true # default false
+      default_version: 1.0 # default null
       resolvers:
           query:
               enabled: true

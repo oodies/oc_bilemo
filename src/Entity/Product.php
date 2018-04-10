@@ -44,6 +44,7 @@ class Product
      *     }
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $idProduct;
@@ -68,6 +69,7 @@ class Product
      *     maxMessage="product.name.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $name;
@@ -89,6 +91,7 @@ class Product
      *     maxMessage="product.code.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $code;
@@ -104,6 +107,7 @@ class Product
      *     options={"comment"="Contains the description of the product"}
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Details"})
      */
     protected $description;
@@ -122,6 +126,7 @@ class Product
      *
      * @Assert\DateTime( message="product.create_at.date_time")
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Details"})
      */
     protected $createAt;
@@ -140,6 +145,7 @@ class Product
      *
      * @Assert\DateTime( message="product.update_at.date_time")
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Details"})
      */
     protected $updateAt;
@@ -165,6 +171,7 @@ class Product
      *
      * @Assert\Valid()
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Details"})
      */
     protected $brand;

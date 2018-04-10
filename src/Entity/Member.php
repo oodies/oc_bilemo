@@ -42,6 +42,7 @@ class Member extends Person
      *
      * @Assert\Valid()
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Customer"})
      */
     protected $customer;
