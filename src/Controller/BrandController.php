@@ -116,7 +116,7 @@ class BrandController extends Controller
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
-     *       @Model(type=Member::class, groups={"Default"} )
+     *       @Model(type=Brand::class, groups={"Default"} )
      * )
      *
      * @Rest\View(serializerGroups={"Default"})
@@ -225,7 +225,12 @@ class BrandController extends Controller
      *
      * @param $idBrand
      *
-     * @SWG\Response(response="204")
+     * @SWG\Response(
+     *     response="204",
+     *     description="Response no content"
+     *     )
+     *
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      */
     public function removeAction($idBrand)
     {
