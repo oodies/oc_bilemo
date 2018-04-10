@@ -9,6 +9,7 @@
 namespace App\Repository;
 
 use App\Entity\Brand;
+use App\Services\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -21,12 +22,33 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 class BrandRepository extends ServiceEntityRepository
 {
     /**
+     * @var Paginator
+     */
+    protected $paginator;
+
+    /**
      * BrandRepository constructor.
      *
      * @param RegistryInterface $registry
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(RegistryInterface $registry, Paginator $paginator)
     {
+        $this->paginator = $paginator;
+
         parent::__construct($registry, Brand::class);
+    }
+
+    /**
+     * @param int|null $maxPerPage
+     * @param int|null $currentPage
+     *
+     * @throws \LogicException
+     *
+     * @return \Pagerfanta\Pagerfanta
+     */
+    public function findAllWithPaginate($maxPerPage = null, $currentPage = null)
+    {
+        $qb = $this->createQueryBuilder('B');
+        return $this->paginator->paginate($qb, $maxPerPage, $currentPage);
     }
 }
