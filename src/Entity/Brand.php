@@ -43,6 +43,7 @@ class Brand
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     private $idBrand;
@@ -69,6 +70,7 @@ class Brand
      *          maxMessage="brand.name.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     private $name;

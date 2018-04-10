@@ -48,6 +48,7 @@ class Customer extends Person
      *      maxMessage="customer.siret.max_length"
      * )
      *
+     * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
     protected $siret;
