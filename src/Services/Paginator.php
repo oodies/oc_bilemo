@@ -21,11 +21,16 @@ class Paginator
 {
     /**
      * @param QueryBuilder $qb
-     * @param int          $maxPerPAge
+     * @param              $maxPerPage
      * @param int          $currentPage
      *
      * @return Pagerfanta
-     * @throws \LogicException
+     *
+     * @throws \Pagerfanta\Exception\LessThan1CurrentPageException
+     * @throws \Pagerfanta\Exception\LessThan1MaxPerPageException
+     * @throws \Pagerfanta\Exception\NotIntegerCurrentPageException
+     * @throws \Pagerfanta\Exception\NotIntegerMaxPerPageException
+     * @throws \Pagerfanta\Exception\OutOfRangeCurrentPageException
      */
     public function paginate(QueryBuilder $qb, $maxPerPage, $currentPage)
     {

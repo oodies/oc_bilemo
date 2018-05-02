@@ -30,6 +30,7 @@ class BrandRepository extends ServiceEntityRepository
      * BrandRepository constructor.
      *
      * @param RegistryInterface $registry
+     * @param Paginator         $paginator
      */
     public function __construct(RegistryInterface $registry, Paginator $paginator)
     {

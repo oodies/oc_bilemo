@@ -20,10 +20,10 @@ class PaginateAbstract
     /**
      * @var array
      */
-    public $paginator;
+    protected $metas;
 
     /**
-     * PaginateAbstract constructor.
+     * PagerfantaMeta constructor.
      *
      * @param Pagerfanta $pagerfanta
      *
@@ -32,15 +32,27 @@ class PaginateAbstract
      */
     public function __construct(Pagerfanta $pagerfanta)
     {
-        // Set paginator property
-        $this->addMetaPaginator('current_page', $pagerfanta->getCurrentPage());
-        $this->addMetaPaginator('max_per_page', $pagerfanta->getMaxPerPage());
-        $this->addMetaPaginator('get_previous_page', $pagerfanta->hasPreviousPage() ? $pagerfanta->getPreviousPage() : false);
-        $this->addMetaPaginator('get_next_page', $pagerfanta->hasNextPage() ? $pagerfanta->getNextPage() : false);
-        $this->addMetaPaginator('current_page_offset_start', $pagerfanta->getCurrentPageOffsetStart());
-        $this->addMetaPaginator('current_page_offset_end', $pagerfanta->getCurrentPageOffsetEnd());
-        $this->addMetaPaginator('current_page_results', count($pagerfanta->getCurrentPageResults()));
-        $this->addMetaPaginator('nb_results', $pagerfanta->getNbResults());
+        // Set metas property
+        $remainingResults = $pagerfanta->getNbResults() - ($pagerfanta->getCurrentPage() * $pagerfanta->getMaxPerPage());
+        $nextPageResults = ($remainingResults > $pagerfanta->getMaxPerPage()) ? $pagerfanta->getMaxPerPage() : $remainingResults;
+        $this->addMeta('current_page', $pagerfanta->getCurrentPage());
+        $this->addMeta('max_per_page', $pagerfanta->getMaxPerPage());
+        $this->addMeta('get_previous_page', $pagerfanta->hasPreviousPage() ? $pagerfanta->getPreviousPage() : false);
+        $this->addMeta('get_next_page', $pagerfanta->hasNextPage() ? $pagerfanta->getNextPage() : false);
+        $this->addMeta('current_page_offset_start', $pagerfanta->getCurrentPageOffsetStart());
+        $this->addMeta('current_page_offset_end', $pagerfanta->getCurrentPageOffsetEnd());
+        $this->addMeta('current_page_results', count($pagerfanta->getCurrentPageResults()));
+        $this->addMeta('next_page_results', $nextPageResults);
+        $this->addMeta('nb_results', $pagerfanta->getNbResults());
+        $this->addMeta('remaining_results', $remainingResults);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMetas(): array
+    {
+        return $this->metas;
     }
 
     /**
@@ -49,9 +61,9 @@ class PaginateAbstract
      *
      * @throws \LogicException
      */
-    private function addMetaPaginator(string $name, $value)
+    private function addMeta(string $name, $value): void
     {
-        if (isset($this->paginator[$name])) {
+        if (isset($this->metas[$name])) {
             throw new \LogicException(
                 sprintf(
                     'This meta already exists. You are trying to override this meta, use the setMeta method instead for the %s meta.',
@@ -59,15 +71,15 @@ class PaginateAbstract
                 )
             );
         }
-        $this->setMetaPaginator($name, $value);
+        $this->setMeta($name, $value);
     }
 
     /**
      * @param string $name
      * @param        $value
      */
-    private function setMetaPaginator(string $name, $value)
+    private function setMeta(string $name, $value): void
     {
-        $this->paginator[$name] = $value;
+        $this->metas[$name] = $value;
     }
 }

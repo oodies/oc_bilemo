@@ -36,19 +36,21 @@ class ViewErrorsHelper
      * @param FormInterface $form
      *
      * @return array
+     *
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function getErrors(FormInterface $form)
     {
         $errors = [];
         foreach ($form->getErrors() as $error) {
-            $errors[] = $this->translator->trans($error->getMessage(), [], 'validator');
+            $errors[] = $this->translator->trans($error->getMessage(), [], 'validators');
         }
 
         foreach ($form->all() as $childForm) {
             if ($childForm instanceof FormInterface) {
                 if ($childErrors = $this->getErrors($childForm)) {
                     foreach ($childErrors as $ref => $error) {
-                        $errors[$childForm->getName()] = $this->translator->trans($error, [], 'validator');
+                        $errors[$childForm->getName()] = $this->translator->trans($error, [], 'validators');
                     }
                 }
             }

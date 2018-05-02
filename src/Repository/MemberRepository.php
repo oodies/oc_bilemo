@@ -12,13 +12,13 @@ use App\Entity\Customer;
 use App\Entity\Member;
 use App\Services\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method Member|null find($id, $lockMode = null, $lockVersion = null)
- * @method Member|null findOneBy(array $criteria, array $orderBy = null)
- * @method Member[]    findAll()
- * @method Member[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * Class MemberRepository
+ *
+ * @package App\Repository
  */
 class MemberRepository extends ServiceEntityRepository
 {
@@ -53,7 +53,8 @@ class MemberRepository extends ServiceEntityRepository
         Customer $customer,
         $maxPerPage = null,
         $currentPage = null
-    ) {
+    ): Pagerfanta
+    {
         $qb = $this->createQueryBuilder('M');
         $qb->where('M.customer = :customer');
         $qb->setParameter('customer', $customer);

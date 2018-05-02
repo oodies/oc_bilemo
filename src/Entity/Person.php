@@ -63,7 +63,7 @@ abstract class Person
      *
      * @Assert\Length(
      *     max=80,
-     *     maxMessage="user.firstname.max_length"
+     *     maxMessage="person.firstname.max_length"
      * )
      *
      * @Serializer\Since("1.0")
@@ -86,7 +86,7 @@ abstract class Person
      *
      * @Assert\Length(
      *     max=80,
-     *     maxMessage="user.lastname.max_length"
+     *     maxMessage="person.lastname.max_length"
      * )
      *
      * @Serializer\Since("1.0")

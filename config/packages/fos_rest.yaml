@@ -31,7 +31,7 @@ fos_rest:
   body_converter:
       enabled: true # default false
       validate: true # default false
-      validation_errors_argument: validationErrors
+      validation_errors_argument: violationList
   #
   service:
       router: router
@@ -45,15 +45,17 @@ fos_rest:
       version: null
       groups: []
       serialize_null: true # default false
-  #
+  # Zone Listener
   zone:
-      # Prototype
       -
+          path: ^/api/*
+      # Prototype
+      #-
           # use the urldecoded format
-          path: null # Example: ^/path to resource/
-          host: null
-          methods: []
-          ips: []
+          #path: null # Example: ^/path to resource/
+          #host: null
+          #methods: []
+          #ips: []
   #
   view:
       default_engine:       twig
@@ -89,7 +91,7 @@ fos_rest:
       codes:
       messages:
       debug:                true
-  #
+  # Body Listener
   body_listener:
       enabled: true
       service: null
@@ -101,7 +103,7 @@ fos_rest:
       array_normalizer:
           service: null
           forms: false
-  #
+  # Format listener
   format_listener:
       enabled:              true
       service:              null
@@ -121,24 +123,12 @@ fos_rest:
 #              prefer_extension:     true
 #              fallback_format:      html
 #              priorities:           []
-          -
-              # URL path info
-              path: ^/api
-              # URL host name
-              host:                 null
-              # Method for URL
-              methods:              null
-              attributes:
-                  # Prototype
-                  name:                 ~
-              stop: false
-              prefer_extension: true
-              fallback_format: json
-              priorities: [ json, html ]
-  #
+          - { path: '^/api/*' , fallback_format: json, priorities: [ json, html ] }
+          - { path: '/', stop: true }
+  # Versioning listener
   versioning:
       enabled: true # default false
-      default_version: 1.0 # default null
+      default_version: "1.0" # default null
       resolvers:
           query:
               enabled: true

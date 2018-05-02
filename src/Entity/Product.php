@@ -176,6 +176,11 @@ class Product
      */
     protected $brand;
 
+
+    public function __construct()
+    {
+        $this->createAt = $this->updateAt = new \DateTime();
+    }
     /** *******************************
      *  GETTER / SETTER
      */

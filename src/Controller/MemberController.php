@@ -11,7 +11,7 @@ namespace App\Controller;
 use App\Entity\Customer;
 use App\Entity\Member;
 use App\Form\MemberType;
-use App\Repository\MemberRepository;
+use App\Manager\MemberManager;
 use App\Services\Paginate\Member as PaginateMember;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -21,11 +21,9 @@ use FOS\RestBundle\View\View as RestView;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\ConstraintViolationList;
-
+use Swagger\Annotations as SWG;
 
 /**
  * Class MemberController
@@ -43,20 +41,17 @@ class MemberController extends Controller
      *     requirements={"idCustomer"="\d+"}
      * )
      *
-     * @SWG\Response(
-     *     response="200",
-     *     description="Returned when successful",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref=@Model(type=Member::class, groups={"Default"} ))
-     *     )
-     * )
-     *
      * @param Customer              $customer
      * @param ParamFetcherInterface $paramFetcher
+     * @param MemberManager         $memberManager
+     *
+     * @return PaginateMember
+     *
+     * @throws \LogicException
+     * @ParamConverter("customer", options={"id"="idCustomer"})
      *
      * @QueryParam (
-     *     name="current_page",
+     *     name="page",
      *     requirements="\d+",
      *     default="1",
      *     description="Pagination start index"
@@ -69,36 +64,42 @@ class MemberController extends Controller
      *     description="Maximum number of results from index"
      * )
      *
-     * @ParamConverter("customer", options={"id"="idCustomer"})
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @SWG\Schema(
+     *          type="array",
+     *          @SWG\Items(ref=@Model(type=Member::class, groups={"Default"} ))
+     *     )
+     * )
      *
      * @Rest\View(serializerGroups={"Default"})
      *
-     * @throws \LogicException
-     *
-     * @return PaginateMember
      */
-    public function cgetAction(Customer $customer, ParamFetcherInterface $paramFetcher)
+    public function cgetAction(Customer $customer, ParamFetcherInterface $paramFetcher, MemberManager $memberManager)
     {
         /** @var Pagerfanta $pager */
-        $pager = $this->_getRepository()->findByCustomerWithPaginate(
+        $pagerfanta = $memberManager->findByCustomerWithPaginate(
             $customer,
             $paramFetcher->get('max_per_page'),
-            $paramFetcher->get('current_page')
+            $paramFetcher->get('page')
         );
 
-        return new PaginateMember($pager);
+        return new PaginateMember($pagerfanta);
     }
 
     /**
      * View the details of a member
      *
      * @Rest\Get(
-     *     path="/api/members/{idMember}",
+     *     path="/api/members/{idPerson}",
      *     name="app_api_member_get",
-     *     requirements={"idMember"="\d+" }
+     *     requirements={"idPerson"="\d+" }
      * )
      *
-     * @param $idMember
+     * @param Member $member
+     *
+     * @ParamConverter("member", options={"id": "idPerson"} )
      *
      * @SWG\Response(
      *     response="200",
@@ -108,13 +109,11 @@ class MemberController extends Controller
      *
      * @Rest\View(serializerGroups={"Default", "Details"})
      *
-     * @throws \LogicException
-     *
-     * @return Member|null|object
+     * @return Member|null
      */
-    public function getAction($idMember)
+    public function getAction(Member $member)
     {
-        return $this->_getRepository()->find($idMember);
+        return $member;
     }
 
     /**
@@ -122,58 +121,102 @@ class MemberController extends Controller
      *
      * @Rest\Post("/api/customer/{idCustomer}/members")
      *
-     * @param  Customer                $customer
-     * @param  ConstraintViolationList $validationError
+     * @param Member                  $member
+     * @param Customer                $customer
+     * @param MemberManager            $memberManager
+     * @param ConstraintViolationList $violationList
      *
      * @ParamConverter("customer", options={"id"="idCustomer"})
+     * @ParamConverter("member", converter="fos_rest.request_body")
      *
      * @SWG\Parameter(
      *     in="formData",
      *     name="member",
      *     type="array",
-     *     @Model(type=MemberType::class)
+     *     @Model(type=MemberType::class, groups={"Default"} )
      * )
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
-     *       @Model(type=Member::class, groups={"Default"} )
+     *     @Model(type=Member::class, groups={"Default"} )
      * )
      *
      * @Rest\View(serializerGroups={"Default"})
      *
-     * TODO to finish
+     * @return RestView
      */
-    public function newAction(Request $request, Customer $customer)
-    {
-        $member = new Member();
-        $form = $this->createForm(MemberType::class, $member);
-        $form->submit($request->request->all());
+    public function newAction(
+        Member $member,
+        Customer $customer,
+        MemberManager $memberManager,
+        ConstraintViolationList $violationList
+    ): RestView {
 
-        if ($form->isValid()) {
-            $member->setCustomer($customer);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($member);
-            $em->flush();
+        $member->setCustomer($customer);
 
-            return RestView::create(
-                ['resource' => $member],
-                Response::HTTP_CREATED
-            );
-        } else {
-            return RestView::create(
-                [],
-                Response::HTTP_BAD_REQUEST
-            );
+        if (count($violationList)) {
+            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
         }
+
+        $memberManager->add($member);
+
+        return RestView::create(['resource' => $member], Response::HTTP_CREATED);
     }
 
     /**
-     * @throws \LogicException
+     * Delete a member
      *
-     * @return MemberRepository|\Doctrine\Common\Persistence\ObjectRepository
+     * @Rest\Delete(
+     *     path="/api/members/{idPerson}",
+     *     name="app_api_member_delete",
+     *     requirements={"idPerson"="\d+"}
+     * )
+     *
+     * @param int           $idPerson
+     * @param MemberManager $memberManager
+     *
+     * @SWG\Response(
+     *     response="204",
+     *     description="Response no content"
+     *     )
+     *
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      */
-    private function _getRepository()
+    public function removeAction(int $idPerson, MemberManager $memberManager)
     {
-        return $this->getDoctrine()->getManager()->getRepository(Member::class);
+        $memberManager->remove($idPerson);
+    }
+
+    /**
+     * TODO à revoir
+     *
+     * Partial change of member data
+     *
+     * @Rest\Patch(
+     *     path="/api/members/{idPerson}",
+     *     name="app_api_member_patch",
+     *     requirements={"idMember"="\d+"}
+     * )
+     *
+     * @param Member                  $member
+     * @param MemberManager           $memberManager
+     * @param ConstraintViolationList $violationList
+     *
+     * @ParamConverter("member", options={"id"="idPerson"} )
+     *
+     * @return RestView
+     */
+    public function patchAction(
+        Member $member,
+        MemberManager $memberManager,
+        ConstraintViolationList $violationList
+    ): RestView {
+        if (count($violationList)) {
+            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
+        }
+
+        $memberManager->add($member);
+
+        return RestView::create(['resource' => $member], Response::HTTP_CREATED);
     }
 }

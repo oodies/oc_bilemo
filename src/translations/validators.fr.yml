@@ -2,3 +2,24 @@ brand:
   name:
     not_blank: "Valeur requise"
     max_length: "{{ limit }} caractères au maximum"
+    unique_entity: "Marque existante"
+
+
+person:
+  firstname:
+    max_length: "{{ limit }} caractères au maximum"
+  lastname:
+    max_length: "{{ limit }} caractères au maximum"
+  cell_phone:
+    max_length: "{{ limit }} caractères au maximum"
+
+product:
+  name:
+    not_blank: "Valeur requise"
+    max_length: "{{ limit }} caractères au maximum"
+  code:
+    max_length: "{{ limit }} caractères au maximum"
+  create_at:
+    date_time: "Date non conforme"
+  update_at:
+    date_time: "Date non conforme"

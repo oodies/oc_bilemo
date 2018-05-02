@@ -9,15 +9,20 @@
 namespace App\Controller;
 
 use App\Entity\Product;
-use App\Repository\ProductRepository;
+use App\Form\ProductType;
+use App\Manager\ProductManager;
 use App\Services\Paginate\Product as PaginateProduct;
+use App\Services\ViewErrorsHelper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View as RestView;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface as Translator;
 use Swagger\Annotations as SWG;
 
 /**
@@ -36,9 +41,10 @@ class ProductController extends Controller
      *     )
      *
      * @param ParamFetcherInterface $paramFetcher
+     * @param ProductManager        $productManager
      *
      * @QueryParam (
-     *     name="current_page",
+     *     name="page",
      *     requirements="\d+",
      *     default="1",
      *     description="Pagination start index"
@@ -59,20 +65,20 @@ class ProductController extends Controller
      *     )
      * )
      *
-     * @throws \LogicException
+     * @Rest\View(serializerGroups={"Default"})
      *
      * @return PaginateProduct
      *
-     * @Rest\View(serializerGroups={"Default"})
+     * @throws \LogicException
      */
-    public function cgetAction(ParamFetcherInterface $paramFetcher)
+    public function cgetAction(ParamFetcherInterface $paramFetcher, ProductManager $productManager)
     {
-        $pager = $this->_getRepository()->findAllWithPaginate(
+        $pagerfanta = $productManager->findAllWithPaginate(
             $paramFetcher->get('max_per_page'),
-            $paramFetcher->get('current_page')
+            $paramFetcher->get('page')
         );
 
-        return new PaginateProduct($pager);
+        return new PaginateProduct($pagerfanta);
     }
 
     /**
@@ -84,7 +90,9 @@ class ProductController extends Controller
      *     requirements={"idProduct"="\d+"}
      * )
      *
-     * @param $idProduct
+     * @param Product $product
+     *
+     * @ParamConverter("product", options={"id": "idProduct"} )
      *
      * @SWG\Response(
      *     response="200",
@@ -98,32 +106,81 @@ class ProductController extends Controller
      *
      * @Rest\View(serializerGroups={"Default", "Details"})
      *
-     * @throws \LogicException
-     *
-     * @return Product|RestView|null|object
+     * @return Product|null
      */
-    public function getAction($idProduct)
+    public function getAction(Product $product)
     {
-        $resource = $this->_getRepository()->find($idProduct);
-
-        if (empty($resource)) {
-            return RestView::create(
-                ['message' => 'Product not found'],
-                Response::HTTP_NOT_FOUND
-            );
-        }
-
-        return $resource;
+        return $product;
     }
 
     /**
+     * TODO à revoir
      *
+     * Create a new product
+     *
+     * @Rest\Post("/api/products")
+     *
+     * @param Request        $request
+     * @param ProductManager $productManager
+     * @param Translator     $translator
+     *
+     * @SWG\Response(
+     *     response="201",
+     *     description="Create successfully",
+     *     @Model(type=Product::class, groups={"Default"} )
+     * )
+     *
+     * @Rest\View(serializerGroups={"Default"})
+     *
+     * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\LogicException
      * @throws \LogicException
-     *
-     * @return ProductRepository|\Doctrine\Common\Persistence\ObjectRepository
      */
-    private function _getRepository()
+    public function newAction(
+        Request $request,
+        ProductManager $productManager,
+        Translator $translator
+    ): RestView {
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+
+        $data = $this->get('jms_serializer')->deserialize($request->getContent(), 'array', 'json');
+
+        $form->submit($data);
+        if ($form->isValid()) {
+            $productManager->add($product);
+            return RestView::create(['resource' => $product], Response::HTTP_CREATED);
+        }
+
+        return RestView::create(
+            ['errors' => (new ViewErrorsHelper($translator))->getErrors($form)],
+            Response::HTTP_BAD_REQUEST
+        );
+
+    }
+
+    /**
+     * Delete a product
+     *
+     * @Rest\Delete(
+     *      path="/api/products/{idProduct}",
+     *      name="app_api_product_delete",
+     *      requirements={"idProduct"="\d+"}
+     * )
+     *
+     * @param int            $idProduct
+     * @param ProductManager $productManager
+     *
+     * @SWG\Response(
+     *     response="204",
+     *     description="Response no content"
+     *     )
+     *
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     */
+    public function removeAction(int $idProduct, ProductManager $productManager)
     {
-        return $this->getDoctrine()->getManager()->getRepository(Product::class);
+        $productManager->remove($idProduct);
     }
 }

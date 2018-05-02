@@ -23,8 +23,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "self",
  *     href = @Hateoas\Route("app_api_member_get",
  *            absolute=true,
- *            parameters={ "idMember" = "expr(object.getIdPerson())" }
+ *            parameters={ "idPerson" = "expr(object.getIdPerson())" }
  *     ) )
+ *
+ * @Hateoas\Relation(
+ *     "modify",
+ *     href = @Hateoas\Route("app_api_member_patch",
+ *            parameters={ "idPerson" = "expr(object.getIdPerson())" },
+ *            absolute=true,
+ *           )
+ * )
+ *
+ * @Hateoas\Relation(
+ *     "delete",
+ *     href = @Hateoas\Route("app_api_member_delete",
+ *            parameters={ "idPerson" = "expr(object.getIdPerson())" },
+ *            absolute=true
+ *          )
+ * )
  */
 class Member extends Person
 {

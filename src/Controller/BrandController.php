@@ -3,8 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Brand;
-use App\Form\BrandType;
-use App\Repository\BrandRepository;
+use App\Manager\BrandManager;
 use App\Services\Paginate\Brand as PaginateBrand;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -15,9 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
-use App\Services\ViewErrorsHelper;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class BrandController
@@ -34,19 +32,11 @@ class BrandController extends Controller
      *     name="app_api_brand_cget"
      * )
      *
-     * @SWG\Response(
-     *     response="200",
-     *     description="Returned when successful",
-     *     @SWG\Schema(
-     *          type="array",
-     *          @SWG\Items(ref=@Model(type=Brand::class, groups={"Default"} ))
-     *     )
-     * )
-     *
      * @param ParamFetcherInterface $paramFetcher
+     * @param BrandManager          $brandManager
      *
      * @QueryParam (
-     *     name="current_page",
+     *     name="page",
      *     requirements="\d+",
      *     default="1",
      *     description="Pagination start index"
@@ -59,20 +49,29 @@ class BrandController extends Controller
      *     description="Maximum number of results from index"
      * )
      *
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @SWG\Schema(
+     *          type="array",
+     *          @SWG\Items(ref=@Model(type=Brand::class, groups={"Default"} ))
+     *     )
+     * )
+     *
      * @Rest\View(serializerGroups={"Default"})
      *
-     * @throws \LogicException
-     *
      * @return PaginateBrand
+     *
+     * @throws \LogicException
      */
-    public function cgetAction(ParamFetcherInterface $paramFetcher)
+    public function cgetAction(ParamFetcherInterface $paramFetcher, BrandManager $brandManager)
     {
-        $pager = $this->_getRepository()->findAllWithPaginate(
+        $pagerfanta = $brandManager->findAllWithPaginate(
             $paramFetcher->get('max_per_page'),
-            $paramFetcher->get('current_page')
+            $paramFetcher->get('page')
         );
 
-        return new PaginateBrand($pager);
+        return new PaginateBrand($pagerfanta);
     }
 
     /**
@@ -85,23 +84,22 @@ class BrandController extends Controller
      * )
      *
      * @param Brand $brand
+     *
      * @ParamConverter("brand", options={"id"="idBrand"} )
      *
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
-     *     @Model(type=Brand::class, groups={"Default", "Details"} )
+     *     @Model(type=Brand::class, groups={"Default"} )
      * )
      * @SWG\Response(
      *     response="404",
      *     description="Returned when the brand is not found"
      * )
      *
-     * @Rest\View(serializerGroups={"Default", "Details"})
+     * @Rest\View(serializerGroups={"Default"})
      *
-     * @throws \LogicException
-     *
-     * @return Brand|RestView
+     * @return Brand|null
      */
     public function getAction(Brand $brand)
     {
@@ -112,42 +110,40 @@ class BrandController extends Controller
      * Create a new brand
      *
      * @Rest\Post("/api/brands")
-
+     *
+     * @param Brand                   $brand
+     * @param BrandManager            $brandManager
+     * @param ConstraintViolationList $violationList
+     *
+     * @ParamConverter("brand", converter="fos_rest.request_body")
+     *
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
-     *       @Model(type=Brand::class, groups={"Default"} )
+     *     @Model(type=Brand::class, groups={"Default"} )
      * )
      *
      * @Rest\View(serializerGroups={"Default"})
+     *
+     * @return RestView
      */
-    public function newAction(Request $request)
-    {
-        $brand = new Brand();
-        $form = $this->createForm(BrandType::class, $brand);
-        $form->submit($request->request->all());
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($brand);
-            $em->flush();
-
-            return RestView::create(
-                ['resource' => $brand],
-                Response::HTTP_CREATED
-            );
-        } else {
-            /** @var TranslatorInterface $translalor */
-            $translator = $this->container->get('translator');
-
-            return RestView::create(
-                ['errors' => (new ViewErrorsHelper($translator))->getErrors($form)],
-                Response::HTTP_BAD_REQUEST
-            );
+    public function newAction(
+        Brand $brand,
+        BrandManager $brandManager,
+        ConstraintViolationList $violationList
+    ): RestView {
+        if (count($violationList)) {
+            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
         }
+
+        $brandManager->add($brand);
+
+        return RestView::create(['resource' => $brand], Response::HTTP_CREATED);
     }
 
     /**
+     * @TODO à revoir
+     *
      * Complete change of brand data
      *
      * @Rest\Put(
@@ -156,16 +152,19 @@ class BrandController extends Controller
      *     requirements={"idBrand"="\d+"}
      * )
      *
-     * @param Request $request
-     * @param Brand   $brand
+     * @param Brand                   $brand
+     * @param BrandManager            $brandManager
+     * @param ConstraintViolationList $violationList
+     *
+     * @return RestView
      * @ParamConverter("brand", options={"id"="idBrand"} )
+     * --ParamConverter("brand", converter="fos_rest.request_body")*
      *
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
      *     @Model(type=Brand::class, groups={"Default", "Details"} )
      * )
-     *
      * @SWG\Response(
      *     response="400",
      *     description="Returned when submitted data is invalid"
@@ -174,14 +173,25 @@ class BrandController extends Controller
      *     response="404",
      *     description="Returned when the brand is not found"
      * )
+     *
      */
-    public function putAction(Request $request, Brand $brand)
-    {
-        return $this->updateResource($request, $brand, true);
+    public function putAction(
+        Brand $brand,
+        BrandManager $brandManager,
+        ConstraintViolationList $violationList
+    ): RestView {
+        if (count($violationList)) {
+            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
+        }
 
+        $brandManager->add($brand);
+
+        return RestView::create(['resource' => $brand], Response::HTTP_CREATED);
     }
 
     /**
+     * TODO à Revoir
+     *
      * Partial change of brand data
      *
      * @Rest\Patch(
@@ -192,6 +202,7 @@ class BrandController extends Controller
      *
      * @param Request $request
      * @param Brand   $brand
+     *
      * @ParamConverter("brand", options={"id"="idBrand"} )
      *
      * @SWG\Response(
@@ -210,7 +221,7 @@ class BrandController extends Controller
      */
     public function patchAction(Request $request, Brand $brand)
     {
-        return $this->updateResource($request, $brand, false);
+        //return $this->updateResource($request, $brand, false);
 
     }
 
@@ -223,7 +234,8 @@ class BrandController extends Controller
      *     requirements={"idBrand"="\d+"}
      * )
      *
-     * @param $idBrand
+     * @param int          $idBrand
+     * @param BrandManager $brandManager
      *
      * @SWG\Response(
      *     response="204",
@@ -232,57 +244,8 @@ class BrandController extends Controller
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      */
-    public function removeAction($idBrand)
+    public function removeAction(int $idBrand, BrandManager $brandManager)
     {
-        $em = $this->getDoctrine()->getManager();
-        $resource = $this->_getRepository()->find($idBrand);
-
-        if ($resource) {
-            $em->remove($resource);
-            $em->flush();
-        }
+        $brandManager->remove($idBrand);
     }
-
-    /**
-     * @param Request $request
-     * @param Brand   $brand
-     * @param bool    $clearMissing
-     */
-    protected function updateResource(Request $request, Brand $brand, bool $clearMissing)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $form = $this->createForm(BrandType::class, $brand);
-        $form->submit($request->request->all(), $clearMissing);
-
-        if ($form->isValid()) {
-            $em->persist($brand);
-            $em->flush();
-
-            return RestView::create(
-                $brand,
-                Response::HTTP_CREATED
-            );
-        } else {
-            /** @var TranslatorInterface $translalor */
-            $translator = $this->container->get('translator');
-
-            return RestView::create(
-                ['errors' => (new ViewErrorsHelper($translator))->getErrors($form)],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-    }
-
-    /**
-     * @throws \LogicException
-     *
-     * @return BrandRepository|\Doctrine\Common\Persistence\ObjectRepository
-     */
-    private function _getRepository()
-    {
-        return $this->getDoctrine()->getManager()->getRepository(Brand::class);
-    }
-
-
 }
