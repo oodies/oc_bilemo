@@ -52,6 +52,16 @@ class MemberManager
     }
 
     /**
+     * @param int $idPerson
+     *
+     * @return Member|null
+     */
+    public function find(int $idPerson)
+    {
+        return $this->repository->find($idPerson);
+    }
+
+    /**
      *
      * @param Customer $customer
      * @param          $mawPerPage
