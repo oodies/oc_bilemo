@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
 
@@ -87,10 +88,12 @@ class BrandController extends Controller
      *     requirements={"idBrand"="\d+"}
      * )
      *
-     * @param Brand $brand
+     * @param int          $idBrand
+     * @param BrandManager $brandManager
      *
-     * @ParamConverter("brand", options={"id"="idBrand"} )
+     * @return Brand|null
      *
+     * @throws NotFoundHttpException
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
@@ -103,10 +106,14 @@ class BrandController extends Controller
      *
      * @Rest\View(serializerGroups={"Default"})
      *
-     * @return Brand|null
      */
-    public function getAction(Brand $brand)
+    public function getAction(int $idBrand, BrandManager $brandManager)
     {
+        $brand = $brandManager->find($idBrand);
+        if (empty($brand)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
         return $brand;
     }
 
@@ -241,15 +248,30 @@ class BrandController extends Controller
      * @param int          $idBrand
      * @param BrandManager $brandManager
      *
+     * @throws NotFoundHttpException
      * @SWG\Response(
      *     response="204",
      *     description="Response no content when delete to make"
      *     )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the brand is not found"
+     * )
+     * @SWG\Response(
+     *     response="500",
+     *     description="Returned when exist foreign key constraint violation"
+     * )
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      */
     public function removeAction(int $idBrand, BrandManager $brandManager)
     {
+        $brand = $brandManager->find($idBrand);
+
+        if (empty($brand)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
         $brandManager->remove($idBrand);
     }
 }
