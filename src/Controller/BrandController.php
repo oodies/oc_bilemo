@@ -57,6 +57,10 @@ class BrandController extends Controller
      *          @SWG\Items(ref=@Model(type=Brand::class, groups={"Default"} ))
      *     )
      * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when there is no result for the submitted parameters"
+     * )
      *
      * @Rest\View(serializerGroups={"Default"})
      *
@@ -239,7 +243,7 @@ class BrandController extends Controller
      *
      * @SWG\Response(
      *     response="204",
-     *     description="Response no content"
+     *     description="Response no content when delete to make"
      *     )
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
