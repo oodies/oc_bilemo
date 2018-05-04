@@ -18,10 +18,10 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View as RestView;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface as Translator;
 use Swagger\Annotations as SWG;
 
@@ -64,6 +64,10 @@ class ProductController extends Controller
      *          @SWG\Items(ref=@Model(type=Product::class, groups={"Default"} ))
      *     )
      * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when there is no result for the submitted parameters"
+     * )
      *
      * @Rest\View(serializerGroups={"Default"})
      *
@@ -90,9 +94,8 @@ class ProductController extends Controller
      *     requirements={"idProduct"="\d+"}
      * )
      *
-     * @param Product $product
-     *
-     * @ParamConverter("product", options={"id": "idProduct"} )
+     * @param int            $idProduct
+     * @param ProductManager $productManager
      *
      * @SWG\Response(
      *     response="200",
@@ -107,9 +110,16 @@ class ProductController extends Controller
      * @Rest\View(serializerGroups={"Default", "Details"})
      *
      * @return Product|null
+     *
+     * @throws NotFoundHttpException
      */
-    public function getAction(Product $product)
+    public function getAction(int $idProduct, ProductManager $productManager)
     {
+        $product = $productManager->find($idProduct);
+        if (empty($product)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
         return $product;
     }
 
@@ -174,13 +184,25 @@ class ProductController extends Controller
      *
      * @SWG\Response(
      *     response="204",
-     *     description="Response no content"
+     *     description="Response no content when delete to make"
      *     )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the product is not found"
+     * )
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     *
+     * @throws NotFoundHttpException
      */
     public function removeAction(int $idProduct, ProductManager $productManager)
     {
+        $product = $productManager->find($idProduct);
+
+        if (empty($product)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
         $productManager->remove($idProduct);
     }
 }
