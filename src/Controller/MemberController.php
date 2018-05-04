@@ -22,6 +22,7 @@ use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
 
@@ -45,9 +46,6 @@ class MemberController extends Controller
      * @param ParamFetcherInterface $paramFetcher
      * @param MemberManager         $memberManager
      *
-     * @return PaginateMember
-     *
-     * @throws \LogicException
      * @ParamConverter("customer", options={"id"="idCustomer"})
      *
      * @QueryParam (
@@ -72,8 +70,16 @@ class MemberController extends Controller
      *          @SWG\Items(ref=@Model(type=Member::class, groups={"Default"} ))
      *     )
      * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when there is no result for the submitted parameters"
+     * )
      *
      * @Rest\View(serializerGroups={"Default"})
+     *
+     * @return PaginateMember
+     *
+     * @throws \LogicException
      *
      */
     public function cgetAction(Customer $customer, ParamFetcherInterface $paramFetcher, MemberManager $memberManager)
@@ -110,9 +116,16 @@ class MemberController extends Controller
      * @Rest\View(serializerGroups={"Default", "Details"})
      *
      * @return Member|null
+     *
+     * @throws NotFoundHttpException
      */
-    public function getAction(Member $member)
+    public function getAction(int $idPerson, MemberManager $memberManager)
     {
+        $member = $memberManager->find($idPerson);
+        if (empty($member)) {
+            throw new NotFoundHttpException('Unknown indentifier');
+        }
+
         return $member;
     }
 
@@ -123,7 +136,7 @@ class MemberController extends Controller
      *
      * @param Member                  $member
      * @param Customer                $customer
-     * @param MemberManager            $memberManager
+     * @param MemberManager           $memberManager
      * @param ConstraintViolationList $violationList
      *
      * @ParamConverter("customer", options={"id"="idCustomer"})
@@ -164,30 +177,6 @@ class MemberController extends Controller
     }
 
     /**
-     * Delete a member
-     *
-     * @Rest\Delete(
-     *     path="/api/members/{idPerson}",
-     *     name="app_api_member_delete",
-     *     requirements={"idPerson"="\d+"}
-     * )
-     *
-     * @param int           $idPerson
-     * @param MemberManager $memberManager
-     *
-     * @SWG\Response(
-     *     response="204",
-     *     description="Response no content"
-     *     )
-     *
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
-     */
-    public function removeAction(int $idPerson, MemberManager $memberManager)
-    {
-        $memberManager->remove($idPerson);
-    }
-
-    /**
      * TODO à revoir
      *
      * Partial change of member data
@@ -218,5 +207,45 @@ class MemberController extends Controller
         $memberManager->add($member);
 
         return RestView::create(['resource' => $member], Response::HTTP_CREATED);
+    }
+
+    /**
+     * Delete a member
+     *
+     * @Rest\Delete(
+     *     path="/api/members/{idPerson}",
+     *     name="app_api_member_delete",
+     *     requirements={"idPerson"="\d+"}
+     * )
+     *
+     * @param int           $idPerson
+     * @param MemberManager $memberManager
+     *
+     * @SWG\Response(
+     *     response="204",
+     *     description="Response no content when delete to make"
+     *     )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the member is not found"
+     * )
+     * @SWG\Response(
+     *     response="500",
+     *     description="Returned when exist foreign key constraint violation"
+     * )
+     *
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     *
+     * @throws NotFoundHttpException
+     */
+    public function removeAction(int $idPerson, MemberManager $memberManager)
+    {
+        $member = $memberManager->find($idPerson);
+
+        if (empty($member)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
+        $memberManager->remove($idPerson);
     }
 }
