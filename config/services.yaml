@@ -15,7 +15,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{Entity,Migrations,Tests,EventSubscriber,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
@@ -23,5 +23,29 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+#    App\Normalizer\Exception\:
+#        resource: '../src/Normalizer/Exception/*'
+#        tags: ['app.normalizer']
+
+    app.normalizer.exception.not_found:
+        class: App\Normalizer\Exception\NotFoundHttpExceptionNormalizer
+        calls:
+            - [setException, ['Symfony\Component\HttpKernel\Exception\NotFoundHttpException']]
+        tags: ['app.normalizer']
+
+    app.normalizer.exception.access_denied:
+        class: App\Normalizer\Exception\AccessDeniedHttpExceptionNormalizer
+        calls:
+            - [setException, ['Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException' ]]
+        tags: ['app.normalizer']
+
+    app.normalizer.exception.foreign_key_constraint_violation:
+        class: App\Normalizer\Exception\ForeignKeyConstraintViolationExceptionNormalizer
+        calls:
+            - [setException, ['Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException' ]]
+        tags: ['app.normalizer']
+
+    app.exception_subscriber:
+        class: App\EventSubscriber\ExceptionSubscriber
+        tags: ['kernel.event_subscriber']
+
