@@ -10,6 +10,7 @@ framework:
         handler_id: ~
 
     #esi: true
+    translator: { fallbacks: ['fr'] }
     #fragments: true
     php_errors:
         log: true
