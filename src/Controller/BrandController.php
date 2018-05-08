@@ -1,4 +1,10 @@
 <?php
+/**
+ * This file is part of oc_bilemo project
+ *
+ * @author: Sébastien CHOMY <sebastien.chomy@gmail.com>
+ * @since 2018/04
+ */
 
 namespace App\Controller;
 
@@ -11,6 +17,7 @@ use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View as RestView;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +34,8 @@ class BrandController extends Controller
 {
     /**
      * Consult the list of the brand
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Get(
      *     path="/api/brands",
@@ -82,6 +91,8 @@ class BrandController extends Controller
     /**
      * View the details of the brand
      *
+     * @Security("has_role('ROLE_API_USER')")
+     *
      * @Rest\Get(
      *     path="/api/brands/{idBrand}",
      *     name="app_api_brand_get",
@@ -120,6 +131,8 @@ class BrandController extends Controller
     /**
      * Create a new brand
      *
+     * @Security("has_role('ROLE_API_USER')")
+     *
      * @Rest\Post("/api/brands")
      *
      * @param Brand                   $brand
@@ -156,6 +169,8 @@ class BrandController extends Controller
      * @TODO à revoir
      *
      * Complete change of brand data
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Put(
      *     path="/api/brands/{idBrand}",
@@ -205,6 +220,8 @@ class BrandController extends Controller
      *
      * Partial change of brand data
      *
+     * @Security("has_role('ROLE_API_USER')")
+     *
      * @Rest\Patch(
      *     path="/api/brands/{idBrand}",
      *     name="app_api_brand_patch",
@@ -238,6 +255,8 @@ class BrandController extends Controller
 
     /**
      * Delete a brand
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Delete(
      *     path="/api/brands/{idBrand}",

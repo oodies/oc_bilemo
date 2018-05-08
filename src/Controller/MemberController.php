@@ -20,6 +20,7 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View as RestView;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,6 +36,8 @@ class MemberController extends Controller
 {
     /**
      * Consult the list of registered members linked to a customer
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Get(
      *     path="/api/customer/{idCustomer}/members",
@@ -97,6 +100,8 @@ class MemberController extends Controller
     /**
      * View the details of a member
      *
+     * @Security("has_role('ROLE_API_USER')")*
+     *
      * @Rest\Get(
      *     path="/api/members/{idPerson}",
      *     name="app_api_member_get",
@@ -131,6 +136,8 @@ class MemberController extends Controller
 
     /**
      * Create a new member link to customer
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Post("/api/customer/{idCustomer}/members")
      *
@@ -181,6 +188,8 @@ class MemberController extends Controller
      *
      * Partial change of member data
      *
+     * @Security("has_role('ROLE_API_USER')")
+     *
      * @Rest\Patch(
      *     path="/api/members/{idPerson}",
      *     name="app_api_member_patch",
@@ -211,6 +220,8 @@ class MemberController extends Controller
 
     /**
      * Delete a member
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Delete(
      *     path="/api/members/{idPerson}",

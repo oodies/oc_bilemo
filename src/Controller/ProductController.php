@@ -18,6 +18,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View as RestView;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,8 @@ class ProductController extends Controller
 {
     /**
      * Consult the list of products
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Get(
      *     path="/api/products",
@@ -88,6 +91,8 @@ class ProductController extends Controller
     /**
      * View the details of the product
      *
+     * @Security("has_role('ROLE_API_USER')")
+     *
      * @Rest\Get(
      *     path="/api/products/{idProduct}",
      *     name="app_api_product_get",
@@ -127,6 +132,8 @@ class ProductController extends Controller
      * TODO à revoir
      *
      * Create a new product
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Post("/api/products")
      *
@@ -172,6 +179,8 @@ class ProductController extends Controller
 
     /**
      * Delete a product
+     *
+     * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Delete(
      *      path="/api/products/{idProduct}",
