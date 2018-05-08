@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "762305890b42acdf06d06221a030c893",
+    "content-hash": "16f197e9b1ea7d0c25a128ae145f31db",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2925,16 +2925,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.0.79",
+            "version": "v1.0.80",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "399e72968d5baa698788e6116fe0f47f269724e0"
+                "reference": "729aee08d62b47224e85b83c97e2824ff7d1735e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/399e72968d5baa698788e6116fe0f47f269724e0",
-                "reference": "399e72968d5baa698788e6116fe0f47f269724e0",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/729aee08d62b47224e85b83c97e2824ff7d1735e",
+                "reference": "729aee08d62b47224e85b83c97e2824ff7d1735e",
                 "shasum": ""
             },
             "require": {
@@ -2967,7 +2967,7 @@
                     "email": "fabien.potencier@gmail.com"
                 }
             ],
-            "time": "2018-04-27T05:19:26+00:00"
+            "time": "2018-05-02T19:08:56+00:00"
         },
         {
             "name": "symfony/form",
@@ -3948,37 +3948,48 @@
             "time": "2018-04-20T06:20:23+00:00"
         },
         {
-            "name": "symfony/security-core",
+            "name": "symfony/security",
             "version": "v4.0.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/security-core.git",
-                "reference": "c197b61766fa0dd3c73fc95968d39ff64ed10232"
+                "url": "https://github.com/symfony/security.git",
+                "reference": "3ba77b4b63fa51f048ebbf8291079a13e31eb6a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-core/zipball/c197b61766fa0dd3c73fc95968d39ff64ed10232",
-                "reference": "c197b61766fa0dd3c73fc95968d39ff64ed10232",
+                "url": "https://api.github.com/repos/symfony/security/zipball/3ba77b4b63fa51f048ebbf8291079a13e31eb6a6",
+                "reference": "3ba77b4b63fa51f048ebbf8291079a13e31eb6a6",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3"
+                "php": "^7.1.3",
+                "symfony/event-dispatcher": "~3.4|~4.0",
+                "symfony/http-foundation": "~3.4|~4.0",
+                "symfony/http-kernel": "~3.4|~4.0",
+                "symfony/property-access": "~3.4|~4.0"
+            },
+            "replace": {
+                "symfony/security-core": "self.version",
+                "symfony/security-csrf": "self.version",
+                "symfony/security-guard": "self.version",
+                "symfony/security-http": "self.version"
             },
             "require-dev": {
                 "psr/container": "^1.0",
                 "psr/log": "~1.0",
-                "symfony/event-dispatcher": "~3.4|~4.0",
                 "symfony/expression-language": "~3.4|~4.0",
-                "symfony/http-foundation": "~3.4|~4.0",
+                "symfony/finder": "~3.4|~4.0",
                 "symfony/ldap": "~3.4|~4.0",
+                "symfony/polyfill-intl-icu": "~1.0",
+                "symfony/routing": "~3.4|~4.0",
                 "symfony/validator": "~3.4|~4.0"
             },
             "suggest": {
                 "psr/container-implementation": "To instantiate the Security class",
-                "symfony/event-dispatcher": "",
                 "symfony/expression-language": "For using the expression voter",
-                "symfony/http-foundation": "",
-                "symfony/ldap": "For using LDAP integration",
+                "symfony/form": "",
+                "symfony/ldap": "For using the LDAP user and authentication providers",
+                "symfony/routing": "For using the HttpUtils class to create sub-requests, redirect the user, and match URLs",
                 "symfony/validator": "For using the user password constraint"
             },
             "type": "library",
@@ -3989,7 +4000,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Symfony\\Component\\Security\\Core\\": ""
+                    "Symfony\\Component\\Security\\": ""
                 },
                 "exclude-from-classmap": [
                     "/Tests/"
@@ -4009,9 +4020,89 @@
                     "homepage": "https://symfony.com/contributors"
                 }
             ],
-            "description": "Symfony Security Component - Core Library",
+            "description": "Symfony Security Component",
             "homepage": "https://symfony.com",
             "time": "2018-04-30T01:23:47+00:00"
+        },
+        {
+            "name": "symfony/security-bundle",
+            "version": "v4.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/security-bundle.git",
+                "reference": "dfabecc1fd3e626e676edef97753a645b4de85a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/security-bundle/zipball/dfabecc1fd3e626e676edef97753a645b4de85a5",
+                "reference": "dfabecc1fd3e626e676edef97753a645b4de85a5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "php": "^7.1.3",
+                "symfony/dependency-injection": "^3.4.3|^4.0.3",
+                "symfony/http-kernel": "~3.4|~4.0",
+                "symfony/security": "~3.4|~4.0"
+            },
+            "conflict": {
+                "symfony/console": "<3.4",
+                "symfony/event-dispatcher": "<3.4",
+                "symfony/framework-bundle": "<3.4",
+                "symfony/var-dumper": "<3.4"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "~1.5",
+                "symfony/asset": "~3.4|~4.0",
+                "symfony/browser-kit": "~3.4|~4.0",
+                "symfony/console": "~3.4|~4.0",
+                "symfony/css-selector": "~3.4|~4.0",
+                "symfony/dom-crawler": "~3.4|~4.0",
+                "symfony/event-dispatcher": "~3.4|~4.0",
+                "symfony/expression-language": "~3.4|~4.0",
+                "symfony/form": "~3.4|~4.0",
+                "symfony/framework-bundle": "~3.4|~4.0",
+                "symfony/http-foundation": "~3.4|~4.0",
+                "symfony/process": "~3.4|~4.0",
+                "symfony/translation": "~3.4|~4.0",
+                "symfony/twig-bridge": "~3.4|~4.0",
+                "symfony/twig-bundle": "~3.4|~4.0",
+                "symfony/validator": "~3.4|~4.0",
+                "symfony/var-dumper": "~3.4|~4.0",
+                "symfony/yaml": "~3.4|~4.0",
+                "twig/twig": "~1.34|~2.4"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Bundle\\SecurityBundle\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony SecurityBundle",
+            "homepage": "https://symfony.com",
+            "time": "2018-04-06T07:35:43+00:00"
         },
         {
             "name": "symfony/templating",
@@ -4875,16 +4966,16 @@
         },
         {
             "name": "symfony/maker-bundle",
-            "version": "v1.4.3",
+            "version": "v1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/maker-bundle.git",
-                "reference": "45fe88c2260f95b20d161dba94b488181180188f"
+                "reference": "eeb9027bbd3472f2d76455cc478b04bbb0eab932"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/45fe88c2260f95b20d161dba94b488181180188f",
-                "reference": "45fe88c2260f95b20d161dba94b488181180188f",
+                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/eeb9027bbd3472f2d76455cc478b04bbb0eab932",
+                "reference": "eeb9027bbd3472f2d76455cc478b04bbb0eab932",
                 "shasum": ""
             },
             "require": {
@@ -4936,7 +5027,7 @@
                 "scaffold",
                 "scaffolding"
             ],
-            "time": "2018-04-22T00:44:55+00:00"
+            "time": "2018-05-02T13:20:32+00:00"
         },
         {
             "name": "symfony/polyfill-php72",
