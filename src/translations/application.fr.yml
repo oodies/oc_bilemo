@@ -1,0 +1,8 @@
+login:
+    username:
+        label: "Utilisateur"
+    password:
+        label: "Mot de passe"
+    submit:
+        label: "Connexion"
+    error: "Identification non résolue"

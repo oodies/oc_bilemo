@@ -1,0 +1,73 @@
+security:
+    #
+    encoders:
+        App\Entity\User\User:
+            algorithm: bcrypt
+            cost: 12
+        App\Security\ApiGuardAuthenticator:
+            algorithm: bcrypt
+            cost: 12
+        App\Security\FormLoginAuthenticator:
+            algorithm: bcrypt
+            cost: 12
+    #
+    providers:
+        user_db:
+            entity:
+                class: App\Entity\User\User
+                ## Use a specific UserRepository::loadUserByUsername()
+                property: username
+                # name of a non-default entity manager
+                # manager_name: ~
+        user_api_db:
+            id: App\Security\User\ApiKeyUserProvider
+    #
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        api:
+            pattern: ^/api
+            provider: user_api_db
+            guard:
+                authenticators:
+                    - App\Security\ApiGuardAuthenticator
+            stateless: true
+            anonymous: ~
+        default:
+            pattern: ^/
+            provider: user_db
+            guard:
+                authenticators:
+                    - App\Security\FormLoginAuthenticator
+            logout:
+                path: /logout
+                target: /login
+                invalidate_session: false
+            anonymous: ~
+#        default:
+#            pattern: ^/
+#            provider: user_db
+#            form_login:
+#                # the user is redirected here when they need to log in
+#                login_path: /login
+#                # submit the login form here
+#                check_path: /login
+#                # field names for the username and password fields
+#                username_parameter: _username
+#                password_parameter: _password
+#                # csrf token options
+#                csrf_parameter:       _crsf_token
+#                csrf_token_id:        authenticate
+#                csrf_token_generator: security.csrf.token_manager
+#            logout:
+#                path: /logout
+#                target: /login
+#                invalidate_session: false
+#            anonymous: ~
+            logout_on_user_change: true
+    #
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api, roles: ROLE_API_USER }
+        - { path: ^/, roles: ROLE_USER }
