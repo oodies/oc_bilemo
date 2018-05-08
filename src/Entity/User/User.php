@@ -6,12 +6,17 @@
  * @since 2018/04
  */
 
-namespace App\Entity;
+namespace App\Entity\User;
 
+use App\Entity\Customer;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * User
@@ -35,7 +40,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  *     groups={"registration"}
  * )
  */
-class User implements AdvancedUserInterface, \Serializable
+class User implements AdvancedUserInterface, \Serializable, UserProviderInterface
 {
     /** *******************************
      *  PROPERTIES
@@ -60,26 +65,6 @@ class User implements AdvancedUserInterface, \Serializable
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * Contains the nickname of the person
-     *
-     * @var string $nickname
-     *
-     * @ORM\Column(
-     *     name="nickname",
-     *     type="string",
-     *     length=80,
-     *     nullable=true,
-     *     options={"comment"="Contains the nickname of the person"}
-     * )
-     *
-     * @Assert\Length(
-     *     max=80,
-     *     maxMessage="user.nickname.max_length"
-     * )
-     */
-    protected $nickname;
 
     /**
      * Contains the firstname of the person
@@ -327,11 +312,15 @@ class User implements AdvancedUserInterface, \Serializable
     protected $roles = [];
 
     /**
+     * @ORM\Column(type="string", unique=true)
+     */
+    protected $apiKey;
+
+    /**
      * @var Customer
      *
      * @ORM\OneToOne(
-     *     targetEntity="App\Entity\Customer",
-     *     inversedBy="user")
+     *     targetEntity="App\Entity\Customer")
      *
      * @ORM\JoinColumn(name="customer_id", referencedColumnName="id_person")
      *
@@ -362,25 +351,6 @@ class User implements AdvancedUserInterface, \Serializable
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getNickname(): string
-    {
-        return $this->nickname;
-    }
-
-    /**
-     * @param string $nickname
-     *
-     * @return User
-     */
-    public function setNickname(string $nickname): User
-    {
-        $this->nickname = $nickname;
-        return $this;
     }
 
     /**
@@ -624,6 +594,26 @@ class User implements AdvancedUserInterface, \Serializable
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+     * @param mixed $apiKey
+     *
+     * @return User
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
+        return $this;
+    }
+
+
     /** *******************************
      *  BEHAVIOR METHOD
      */
@@ -674,6 +664,52 @@ class User implements AdvancedUserInterface, \Serializable
     {
         // TODO STUB to implement
         return true;
+    }
+
+    /**
+     * Loads the user for the given username.
+     *
+     * This method must throw UsernameNotFoundException if the user is not
+     * found.
+     *
+     * @param string $username The username
+     *
+     * @return UserInterface
+     *
+     * @throws UsernameNotFoundException if the user is not found
+     */
+    public function loadUserByUsername($username)
+    {
+        // TODO: Implement loadUserByUsername() method.
+    }
+
+    /**
+     * Refreshes the user.
+     *
+     * It is up to the implementation to decide if the user data should be
+     * totally reloaded (e.g. from the database), or if the UserInterface
+     * object can just be merged into some internal array of users / identity
+     * map.
+     *
+     * @return UserInterface
+     *
+     * @throws UnsupportedUserException if the user is not supported
+     */
+    public function refreshUser(UserInterface $user)
+    {
+        // TODO: Implement refreshUser() method.
+    }
+
+    /**
+     * Whether this provider supports the given user class.
+     *
+     * @param string $class
+     *
+     * @return bool
+     */
+    public function supportsClass($class)
+    {
+        // TODO: Implement supportsClass() method.
     }
 
     /**
@@ -743,7 +779,7 @@ class User implements AdvancedUserInterface, \Serializable
      */
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        $this->plainPassword = null;
     }
 
 
