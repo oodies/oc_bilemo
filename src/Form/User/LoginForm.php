@@ -60,7 +60,7 @@ class LoginForm extends AbstractType
     }
 
     /**
-     * @return null|string
+     * @return null
      */
     public function getBlockPrefix()
     {
