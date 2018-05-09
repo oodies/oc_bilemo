@@ -4,28 +4,29 @@ security:
         App\Entity\User\User:
             algorithm: bcrypt
             cost: 12
-        App\Security\ApiGuardAuthenticator:
-            algorithm: bcrypt
-            cost: 12
-        App\Security\FormLoginAuthenticator:
-            algorithm: bcrypt
-            cost: 12
     #
     providers:
         user_db:
             entity:
                 class: App\Entity\User\User
-                ## Use a specific UserRepository::loadUserByUsername()
                 property: username
-                # name of a non-default entity manager
-                # manager_name: ~
         user_api_db:
-            id: App\Security\User\ApiKeyUserProvider
+            entity:
+                class: App\Entity\User\User
+                property: apiKey
     #
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        api:
+            pattern: ^/api
+            provider: user_api_db
+            guard:
+                authenticators:
+                    - App\Security\ApiGuardAuthenticator
+            stateless: true
+            anonymous: ~
         default:
             pattern: ^/
             provider: user_db
@@ -48,14 +49,6 @@ security:
                 target: /login
                 invalidate_session: false
             logout_on_user_change: true
-        api:
-            pattern: ^/api
-            provider: user_api_db
-            guard:
-                authenticators:
-                    - App\Security\ApiGuardAuthenticator
-            stateless: true
-            anonymous: ~
     #
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
