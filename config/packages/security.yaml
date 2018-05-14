@@ -10,10 +10,6 @@ security:
             entity:
                 class: App\Entity\User\User
                 property: username
-        user_api_db:
-            entity:
-                class: App\Entity\User\User
-                property: apiKey
     #
     firewalls:
         dev:
@@ -21,10 +17,9 @@ security:
             security: false
         api:
             pattern: ^/api
-            provider: user_api_db
             guard:
                 authenticators:
-                    - App\Security\ApiGuardAuthenticator
+                    - lexik_jwt_authentication.jwt_token_authenticator
             stateless: true
             anonymous: ~
         default:
@@ -54,3 +49,6 @@ security:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, roles: ROLE_API_USER }
         - { path: ^/, roles: ROLE_USER }
+    #
+    role_hierarchy:
+        ROLE_API_USER: [ROLE_USER]
