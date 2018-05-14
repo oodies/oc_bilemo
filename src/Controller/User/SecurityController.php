@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
@@ -23,17 +24,21 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends Controller
 {
     /**
-     * @param AuthenticationUtils $authUtils
+     * @Route(
+     *      path="/login",
+     *      name="app_user_security_login"
+     * )
      *
-     * @Route("/login")
+     * @param AuthenticationUtils $authUtils
+     * @param UserInterface|null  $user
      *
      * @return RedirectResponse|Response
      * @throws \LogicException
      */
-    public function loginAction(AuthenticationUtils $authUtils): Response
+    public function loginAction(AuthenticationUtils $authUtils, UserInterface $user = null): Response
     {
-        if (!is_null($this->getUser())) {
-            return $this->redirectToRoute('app.swagger_ui');
+        if (!is_null($user)) {
+            return $this->redirectToRoute('api_token_new');
         }
 
         // last username entered by the user
@@ -52,7 +57,10 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/logout")
+     * @Route(
+     *     path="/logout",
+     *     name="app_user_security_logout"
+     * )
      */
     public function logoutAction()
     {

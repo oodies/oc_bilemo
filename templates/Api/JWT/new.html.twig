@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Administration</h1>
+    <p>If you access this page, it's because you are authenticated</p>
+    <p>Actually you are!</p>
+    <label for="token">We have an access token:</label>
+    <textarea id="token" class="col-6" rows="15" >{{ token }}</textarea>
+    <div class="mt-2">
+        <a href="{{ path('app_user_security_logout') }}" class="btn btn-danger">Logout</a>
+    </div>
+{% endblock body %}

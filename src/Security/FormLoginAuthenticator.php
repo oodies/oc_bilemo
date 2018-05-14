@@ -178,7 +178,7 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new RedirectResponse($this->router->generate('app.swagger_ui'));
+        return new RedirectResponse($this->router->generate('api_token_new'));
     }
 
     /**
