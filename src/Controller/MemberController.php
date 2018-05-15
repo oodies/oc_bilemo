@@ -109,8 +109,6 @@ class MemberController extends Controller
      * @param int           $id
      * @param MemberManager $memberManager
      *
-     * @ParamConverter("member", options={"id": "id"} )
-     *
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
@@ -126,10 +124,14 @@ class MemberController extends Controller
      * @return Member|null
      *
      * @throws NotFoundHttpException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \LogicException
      */
-    public function getAction(int $id, MemberManager $memberManager)
-    {
-        $member = $memberManager->find($id);
+    public function getAction(
+        int $id,
+        MemberManager $memberManager
+    ) {
+        $member = $memberManager->findOneByCustomer($id, $this->getUser()->getCustomer());
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }
@@ -227,10 +229,10 @@ class MemberController extends Controller
      *
      * @return RestView
      *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
      * @throws \LogicException
      * @throws \Symfony\Component\Form\Exception\LogicException
-     * @throws \LogicException
      * @throws NotFoundHttpException
      */
     public function patchAction(
@@ -277,6 +279,7 @@ class MemberController extends Controller
      *
      * @return RestView
      *
+     * @throws \Doctrine\ORM\NonUniqueResultException*
      * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
      * @throws \LogicException
      * @throws \Symfony\Component\Form\Exception\LogicException
@@ -320,11 +323,13 @@ class MemberController extends Controller
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \LogicException
      * @throws NotFoundHttpException
      */
     public function removeAction(int $id, MemberManager $memberManager)
     {
-        $member = $memberManager->find($id);
+        $member = $memberManager->findOneByCustomer($id, $this->getUser()->getCustomer());
 
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
@@ -344,13 +349,14 @@ class MemberController extends Controller
      * @throws \Symfony\Component\Form\Exception\LogicException
      * @throws NotFoundHttpException
      * @throws \LogicException
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function updateResource(
         Request $request,
         MemberManager $memberManager,
         bool $clearMissing
     ) {
-        $member = $memberManager->find($request->get('id'));
+        $member = $memberManager->findOneByCustomer($request->get('id'), $this->getUser()->getCustomer());
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }

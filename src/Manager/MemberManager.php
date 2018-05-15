@@ -52,13 +52,26 @@ class MemberManager
     }
 
     /**
-     * @param int $idPerson
+     * @param int $id
      *
      * @return Member|null
      */
-    public function find(int $idPerson)
+    public function find(int $id)
     {
-        return $this->repository->find($idPerson);
+        return $this->repository->find($id);
+    }
+
+    /**
+     * @param int      $id
+     * @param Customer $customer
+     *
+     * @return Member|null
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByCustomer(int $id, Customer $customer)
+    {
+        return $this->repository->findOneByCustomer($id, $customer);
     }
 
     /**
@@ -90,11 +103,11 @@ class MemberManager
     /**
      * Remove a member
      *
-     * @param int $idMember
+     * @param int $id
      */
-    public function remove(int $idMember)
+    public function remove(int $id)
     {
-        $member = $this->find($idMember);
+        $member = $this->find($id);
 
         if ($member) {
             $this->em->remove($member);

@@ -41,9 +41,9 @@ class MemberRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Customer   $customer
-     * @param int|null   $maxPerPage
-     * @param int|null   $currentPage
+     * @param Customer $customer
+     * @param int|null $maxPerPage
+     * @param int|null $currentPage
      *
      * @throws \LogicException
      *
@@ -53,12 +53,32 @@ class MemberRepository extends ServiceEntityRepository
         Customer $customer,
         $maxPerPage = null,
         $currentPage = null
-    ): Pagerfanta
-    {
+    ): Pagerfanta {
         $qb = $this->createQueryBuilder('M');
         $qb->where('M.customer = :customer');
         $qb->setParameter('customer', $customer);
 
         return $this->paginator->paginate($qb, $maxPerPage, $currentPage);
     }
+
+    /**
+     * @param int      $id
+     * @param Customer $customer
+     *
+     * @return mixed
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByCustomer(int $id, Customer $customer)
+    {
+        $qb = $this->createQueryBuilder('M')
+                   ->where('M.customer = :customer')
+                   ->andWhere('M.id = :id')
+                   ->setParameter('customer', $customer)
+                   ->setParameter('id', $id);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+
 }
