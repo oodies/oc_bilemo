@@ -23,6 +23,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Swagger\Annotations as SWG;
@@ -196,38 +197,103 @@ class MemberController extends Controller
     /**
      * Partial change of member data
      *
-     *
-     * TODO à revoir
-     *
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Patch(
      *     path="/api/members/{idPerson}",
      *     name="app_api_member_patch",
-     *     requirements={"idMember"="\d+"}
+     *     requirements={"idPerson"="\d+"}
      * )
      *
-     * @param Member                  $member
-     * @param MemberManager           $memberManager
-     * @param ConstraintViolationList $violationList
+     * @param Request       $request
+     * @param MemberManager $memberManager
      *
-     * @ParamConverter("member", options={"id"="idPerson"} )
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="Member",
+     *     @SWG\Schema(
+     *          ref=@Model(type=MemberType::class, groups={"Default","Details"} )
+     *      )
+     * )
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @Model(type=Member::class, groups={"Default", "Details"} )
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when submitted data is invalid"
+     * )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the member is not found"
+     * )
      *
      * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \LogicException
+     * @throws NotFoundHttpException
      */
     public function patchAction(
-        Member $member,
-        MemberManager $memberManager,
-        ConstraintViolationList $violationList
+        Request $request,
+        MemberManager $memberManager
     ): RestView {
-        if (count($violationList)) {
-            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
-        }
-
-        $memberManager->add($member);
-
-        return RestView::create(['resource' => $member], Response::HTTP_CREATED);
+        return $this->updateResource($request, $memberManager, false);
     }
+
+    /**
+     * Complete change of member data
+     *
+     * @Security("has_role('ROLE_API_USER')")
+     *
+     * @Rest\Put(
+     *     path="/api/members/{idPerson}",
+     *     name="app_api_member_put",
+     *     requirements={"idPerson"="\d+"}
+     * )
+     *
+     * @param Request       $request
+     * @param MemberManager $memberManager
+     *
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="Member",
+     *     @SWG\Schema(
+     *          ref=@Model(type=MemberType::class, groups={"Default","Details"} )
+     *      )
+     * )
+     * @SWG\Response(
+     *     response="200",
+     *     description="Returned when successful",
+     *     @Model(type=Member::class, groups={"Default", "Details"} )
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when submitted data is invalid"
+     * )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the member is not found"
+     * )
+     *
+     * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \LogicException
+     * @throws NotFoundHttpException
+     */
+    public function putAction(
+        Request $request,
+        MemberManager $memberManager
+    ): RestView {
+        return $this->updateResource($request, $memberManager, true);
+    }
+
 
     /**
      * Delete a member
@@ -269,5 +335,38 @@ class MemberController extends Controller
         }
 
         $memberManager->remove($idPerson);
+    }
+
+    /**
+     * @param Request       $request
+     * @param MemberManager $brandManager
+     * @param bool          $clearMissing
+     *
+     * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws NotFoundHttpException
+     * @throws \LogicException
+     */
+    private function updateResource(
+        Request $request,
+        MemberManager $memberManager,
+        bool $clearMissing
+    ) {
+        $member = $memberManager->find($request->get('idPerson'));
+        if (empty($member)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
+        $form = $this->createForm(MemberType::class, $member);
+        $form->submit(json_decode($request->getContent(), true), $clearMissing);
+
+        if ($form->isValid()) {
+            $memberManager->add($member);
+            return RestView::create($member, Response::HTTP_CREATED);
+        }
+
+        return RestView::create(['errors' => $form], Response::HTTP_BAD_REQUEST);
     }
 }
