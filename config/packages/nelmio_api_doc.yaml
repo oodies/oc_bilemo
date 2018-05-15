@@ -22,4 +22,4 @@ nelmio_api_doc:
             - Bearer: []
     areas: # to filter documented areas
         path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - ^/api/{1} # Accepts routes under /api/
