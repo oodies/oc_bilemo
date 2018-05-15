@@ -11,10 +11,8 @@ namespace App\Entity\User;
 use App\Entity\Customer;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * User
@@ -38,7 +36,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  *     groups={"registration"}
  * )
  */
-class User implements AdvancedUserInterface, \Serializable, UserProviderInterface
+class User implements AdvancedUserInterface, \Serializable
 {
     /** *******************************
      *  PROPERTIES
@@ -642,52 +640,6 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
     {
         // TODO STUB to implement
         return true;
-    }
-
-    /**
-     * Loads the user for the given username.
-     *
-     * This method must throw UsernameNotFoundException if the user is not
-     * found.
-     *
-     * @param string $username The username
-     *
-     * @return UserInterface
-     *
-     */
-    public function loadUserByUsername($username)
-    {
-        // TODO: Implement loadUserByUsername() method.
-    }
-
-    /**
-     * Refreshes the user.
-     *
-     * It is up to the implementation to decide if the user data should be
-     * totally reloaded (e.g. from the database), or if the UserInterface
-     * object can just be merged into some internal array of users / identity
-     * map.
-     *
-     * @param UserInterface $user
-     *
-     * @return void
-     *
-     */
-    public function refreshUser(UserInterface $user)
-    {
-        // TODO: Implement refreshUser() method.
-    }
-
-    /**
-     * Whether this provider supports the given user class.
-     *
-     * @param string $class
-     *
-     * @return bool
-     */
-    public function supportsClass($class): bool
-    {
-        // TODO: Implement supportsClass() method.
     }
 
     /**
