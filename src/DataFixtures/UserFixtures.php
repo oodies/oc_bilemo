@@ -58,24 +58,25 @@ class UserFixtures extends Fixture implements ContainerAwareInterface, Dependent
     public function load(ObjectManager $manager)
     {
         $dateTime = new \DateTime();
+        for ($i=1; $i <=5; $i++ ) {
+            $user = new User();
+            $user->setRegisteredAt($dateTime)
+                 ->setUpdateAt($dateTime)
+                 ->setUsername("customer_$i")
+                 ->setEmail("customer$i@mail.com")
+                 ->setFirstname("firstname_$i")
+                 ->setLastname("lastname_$i")
+                 ->setRoles(['ROLE_API_USER']);
 
-        $user = new User();
-        $user->setRegisteredAt($dateTime)
-             ->setUpdateAt($dateTime)
-             ->setUsername('customer')
-             ->setEmail('customer1@mail.com')
-             ->setFirstname('firstname')
-             ->setLastname('lastname')
-             ->setRoles(['ROLE_API_USER']);
+            $hashPassword = $this->encoder->encodePassword($user, '12345');
+            $user->setPassword($hashPassword);
 
-        $hashPassword = $this->encoder->encodePassword($user, '12345');
-        $user->setPassword($hashPassword);
+            /** @var \App\Entity\Customer $customer */
+            $customer = $this->getReference("customer_$i");
+            $user->setCustomer($customer);
 
-        /** @var \App\Entity\Customer $customer */
-        $customer = $this->getReference('customer_1');
-        $user->setCustomer($customer);
-
-        $manager->persist($user);
+            $manager->persist($user);
+        }
         $manager->flush();
     }
 
