@@ -49,7 +49,7 @@ class ViewErrorsHelper
         foreach ($form->all() as $childForm) {
             if ($childForm instanceof FormInterface) {
                 if ($childErrors = $this->getErrors($childForm)) {
-                    foreach ($childErrors as $ref => $error) {
+                    foreach ($childErrors as $error) {
                         $errors[$childForm->getName()] = $this->translator->trans($error, [], 'validators');
                     }
                 }
