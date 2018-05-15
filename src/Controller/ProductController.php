@@ -88,12 +88,12 @@ class ProductController extends Controller
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Get(
-     *     path="/api/products/{idProduct}",
+     *     path="/api/products/{id}",
      *     name="app_api_product_get",
-     *     requirements={"idProduct"="\d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
-     * @param int            $idProduct
+     * @param int            $id
      * @param ProductManager $productManager
      *
      * @SWG\Response(
@@ -112,9 +112,9 @@ class ProductController extends Controller
      *
      * @throws NotFoundHttpException
      */
-    public function getAction(int $idProduct, ProductManager $productManager)
+    public function getAction(int $id, ProductManager $productManager)
     {
-        $product = $productManager->find($idProduct);
+        $product = $productManager->find($id);
         if (empty($product)) {
             throw new NotFoundHttpException('Unknown identifier');
         }

@@ -23,13 +23,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "self",
  *     href = @Hateoas\Route("app_api_member_get",
  *            absolute=true,
- *            parameters={ "idPerson" = "expr(object.getIdPerson())" }
+ *            parameters={ "id" = "expr(object.getId())" }
  *     ) )
  *
  * @Hateoas\Relation(
  *     "modify",
  *     href = @Hateoas\Route("app_api_member_patch",
- *            parameters={ "idPerson" = "expr(object.getIdPerson())" },
+ *            parameters={ "id" = "expr(object.getId())" },
  *            absolute=true,
  *           )
  * )
@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Hateoas\Relation(
  *     "delete",
  *     href = @Hateoas\Route("app_api_member_delete",
- *            parameters={ "idPerson" = "expr(object.getIdPerson())" },
+ *            parameters={ "id" = "expr(object.getId())" },
  *            absolute=true
  *          )
  * )
@@ -52,7 +52,7 @@ class Member extends Person
      * )
      * @ORM\JoinColumn(
      *      name="customer_id",
-     *      referencedColumnName="id_person",
+     *      referencedColumnName="id",
      *      nullable=false
      * )
      *

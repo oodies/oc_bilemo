@@ -31,7 +31,7 @@ class Brand
      * @var int|null
      *
      * @ORM\Column(
-     *     name="id_brand",
+     *     name="id",
      *     type="integer",
      *     length=11,
      *     nullable=false,
@@ -46,7 +46,7 @@ class Brand
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
-    private $idBrand;
+    private $id;
 
     /**
      * Contains the name of the brand
@@ -82,9 +82,9 @@ class Brand
     /**
      * @return int|null
      */
-    public function getIdBrand(): ?int
+    public function getId(): ?int
     {
-        return $this->idBrand;
+        return $this->id;
     }
 
     /**

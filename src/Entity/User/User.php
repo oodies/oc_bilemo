@@ -11,8 +11,6 @@ namespace App\Entity\User;
 use App\Entity\Customer;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -52,7 +50,7 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      * @var int
      *
      * @ORM\Column(
-     *     name="id_user",
+     *     name="id",
      *     type="integer",
      *     unique=true,
      *     length=11,
@@ -322,7 +320,7 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      * @ORM\OneToOne(
      *     targetEntity="App\Entity\Customer")
      *
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id_person")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
      *
      * @Assert\Valid()
      */
@@ -676,7 +674,6 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      *
      * @return UserInterface
      *
-     * @throws UsernameNotFoundException if the user is not found
      */
     public function loadUserByUsername($username)
     {
@@ -691,9 +688,10 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      * object can just be merged into some internal array of users / identity
      * map.
      *
-     * @return UserInterface
+     * @param UserInterface $user
      *
-     * @throws UnsupportedUserException if the user is not supported
+     * @return void
+     *
      */
     public function refreshUser(UserInterface $user)
     {
@@ -707,7 +705,7 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      *
      * @return bool
      */
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         // TODO: Implement supportsClass() method.
     }

@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "self",
  *     href = @Hateoas\Route("app_api_product_get",
  *            absolute=true,
- *            parameters={ "idProduct" = "expr(object.getIdProduct())" }
+ *            parameters={ "idProduct" = "expr(object.getId())" }
  *     ) )
  */
 class Product
@@ -34,7 +34,7 @@ class Product
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(
-     *     name="id_product",
+     *     name="id",
      *     type="integer",
      *     length=11,
      *     nullable=false,
@@ -47,7 +47,7 @@ class Product
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
-    protected $idProduct;
+    protected $id;
 
     /**
      * Contains the name of the product
@@ -155,7 +155,7 @@ class Product
      */
 
     /**
-     * One brand have many product
+     * The brand of the product
      *
      * @var null|Brand
      *
@@ -165,7 +165,7 @@ class Product
      * )
      * @ORM\JoinColumn(
      *      name="brand_id",
-     *      referencedColumnName="id_brand",
+     *      referencedColumnName="id",
      *      nullable=false
      * )
      *
@@ -188,9 +188,9 @@ class Product
     /**
      * @return int|null
      */
-    public function getIdProduct(): ?int
+    public function getId(): ?int
     {
-        return $this->idProduct;
+        return $this->id;
     }
 
     /**

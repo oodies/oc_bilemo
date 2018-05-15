@@ -30,7 +30,7 @@ abstract class Person
      * @var int
      *
      * @ORM\Column(
-     *     name="id_person",
+     *     name="id",
      *     type="integer",
      *     unique=true,
      *     length=11,
@@ -45,7 +45,7 @@ abstract class Person
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
-    protected $idPerson;
+    protected $id;
 
 
     /**
@@ -133,7 +133,7 @@ abstract class Person
      * )
      * @ORM\JoinColumn(
      *      name="address_id",
-     *      referencedColumnName="id_address",
+     *      referencedColumnName="id",
      *     nullable=true
      * )
      *
@@ -151,9 +151,9 @@ abstract class Person
     /**
      * @return int
      */
-    public function getIdPerson(): int
+    public function getId(): int
     {
-        return $this->idPerson;
+        return $this->id;
     }
 
     /**

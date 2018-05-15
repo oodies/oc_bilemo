@@ -101,15 +101,15 @@ class MemberController extends Controller
      * @Security("has_role('ROLE_API_USER')")*
      *
      * @Rest\Get(
-     *     path="/api/members/{idPerson}",
+     *     path="/api/members/{id}",
      *     name="app_api_member_get",
-     *     requirements={"idPerson"="\d+" }
+     *     requirements={"id"="\d+" }
      * )
      *
-     * @param int           $idPerson
+     * @param int           $id
      * @param MemberManager $memberManager
      *
-     * @ParamConverter("member", options={"id": "idPerson"} )
+     * @ParamConverter("member", options={"id": "id"} )
      *
      * @SWG\Response(
      *     response="200",
@@ -127,9 +127,9 @@ class MemberController extends Controller
      *
      * @throws NotFoundHttpException
      */
-    public function getAction(int $idPerson, MemberManager $memberManager)
+    public function getAction(int $id, MemberManager $memberManager)
     {
-        $member = $memberManager->find($idPerson);
+        $member = $memberManager->find($id);
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }
@@ -196,9 +196,9 @@ class MemberController extends Controller
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Patch(
-     *     path="/api/members/{idPerson}",
+     *     path="/api/members/{id}",
      *     name="app_api_member_patch",
-     *     requirements={"idPerson"="\d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
      * @param Request       $request
@@ -246,9 +246,9 @@ class MemberController extends Controller
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Put(
-     *     path="/api/members/{idPerson}",
+     *     path="/api/members/{id}",
      *     name="app_api_member_put",
-     *     requirements={"idPerson"="\d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
      * @param Request       $request
@@ -297,12 +297,12 @@ class MemberController extends Controller
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Delete(
-     *     path="/api/members/{idPerson}",
+     *     path="/api/members/{id}",
      *     name="app_api_member_delete",
-     *     requirements={"idPerson"="\d+"}
+     *     requirements={"id"="\d+"}
      * )
      *
-     * @param int           $idPerson
+     * @param int           $id
      * @param MemberManager $memberManager
      *
      * @SWG\Response(
@@ -322,15 +322,15 @@ class MemberController extends Controller
      *
      * @throws NotFoundHttpException
      */
-    public function removeAction(int $idPerson, MemberManager $memberManager)
+    public function removeAction(int $id, MemberManager $memberManager)
     {
-        $member = $memberManager->find($idPerson);
+        $member = $memberManager->find($id);
 
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }
 
-        $memberManager->remove($idPerson);
+        $memberManager->remove($id);
     }
 
     /**
@@ -350,7 +350,7 @@ class MemberController extends Controller
         MemberManager $memberManager,
         bool $clearMissing
     ) {
-        $member = $memberManager->find($request->get('idPerson'));
+        $member = $memberManager->find($request->get('id'));
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }

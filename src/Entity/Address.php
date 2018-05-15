@@ -24,7 +24,7 @@ class Address
      * @var int|null
      *
      * @ORM\Column(
-     *     name="id_address",
+     *     name="id",
      *     type="integer",
      *     length=11,
      *     nullable=false,
@@ -40,7 +40,7 @@ class Address
      * @Serializer\Since("1.0")
      * @Serializer\Groups({"Default"})
      */
-    protected $idAddress;
+    protected $id;
 
     /**
      * Contains the full street address without city and postal code
@@ -118,9 +118,9 @@ class Address
     /**
      * @return int|null
      */
-    public function getIdAddress(): ?int
+    public function getId(): ?int
     {
-        return $this->idAddress;
+        return $this->id;
     }
 
     /**
