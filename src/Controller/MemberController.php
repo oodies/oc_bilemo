@@ -8,7 +8,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Customer;
 use App\Entity\Member;
 use App\Form\MemberType;
 use App\Manager\MemberManager;
@@ -41,16 +40,12 @@ class MemberController extends Controller
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Get(
-     *     path="/api/customer/{idCustomer}/members",
-     *     name="app_api_member_cget",
-     *     requirements={"idCustomer"="\d+"}
+     *     path="/api/members",
+     *     name="app_api_member_cget"
      * )
      *
-     * @param Customer              $customer
      * @param ParamFetcherInterface $paramFetcher
      * @param MemberManager         $memberManager
-     *
-     * @ParamConverter("customer", options={"id"="idCustomer"})
      *
      * @QueryParam (
      *     name="page",
@@ -86,11 +81,13 @@ class MemberController extends Controller
      * @throws \LogicException
      *
      */
-    public function cgetAction(Customer $customer, ParamFetcherInterface $paramFetcher, MemberManager $memberManager)
-    {
+    public function cgetAction(
+        ParamFetcherInterface $paramFetcher,
+        MemberManager $memberManager
+    ) {
         /** @var Pagerfanta $pager */
         $pagerfanta = $memberManager->findByCustomerWithPaginate(
-            $customer,
+            $this->getUser()->getCustomer(),
             $paramFetcher->get('max_per_page'),
             $paramFetcher->get('page')
         );
@@ -145,14 +142,12 @@ class MemberController extends Controller
      *
      * @Security("has_role('ROLE_API_USER')")
      *
-     * @Rest\Post("/api/customer/{idCustomer}/members")
+     * @Rest\Post("/api/members")
      *
      * @param Member                  $member
-     * @param Customer                $customer
      * @param MemberManager           $memberManager
      * @param ConstraintViolationList $violationList
      *
-     * @ParamConverter("customer", options={"id"="idCustomer"})
      * @ParamConverter("member", converter="fos_rest.request_body")
      *
      * @SWG\Parameter(
@@ -175,15 +170,16 @@ class MemberController extends Controller
      * @Rest\View(serializerGroups={"Default", "Details"})
      *
      * @return RestView
+     *
+     * @throws \LogicException
      */
     public function newAction(
         Member $member,
-        Customer $customer,
         MemberManager $memberManager,
         ConstraintViolationList $violationList
     ): RestView {
 
-        $member->setCustomer($customer);
+        $member->setCustomer($this->getUser()->getCustomer());
 
         if (count($violationList)) {
             return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
@@ -339,7 +335,7 @@ class MemberController extends Controller
 
     /**
      * @param Request       $request
-     * @param MemberManager $brandManager
+     * @param MemberManager $memberManager
      * @param bool          $clearMissing
      *
      * @return RestView
