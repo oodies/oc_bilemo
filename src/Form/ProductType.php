@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Brand;
 use App\Entity\Product;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,14 +24,46 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('code', TextType::class,
+            ->add(
+                'name', TextType::class,
                 [
-                    "required" => true
-                ])
-            ->add('description', TextType::class)
-            //->add('brand')
-        ;
+                    'documentation' => [
+                        'type'        => 'string',
+                        'description' => 'the name of the product'
+                    ]
+                ]
+            )
+            ->add(
+                'code', TextType::class,
+                [
+                    'documentation' => [
+                        'type'        => 'string',
+                        'description' => 'the code of the product'
+                    ]
+                ]
+            )
+            ->add(
+                'description', TextType::class,
+                [
+                    'required'      => false,
+                    'documentation' => [
+                        'type'        => 'string',
+                        'description' => 'the description of the product'
+                    ]
+                ]
+            )
+            ->add(
+                'Brand', EntityType::class,
+                [
+                    'class'         => Brand::class,
+                    'choice_value'  => 'idBrand',
+                    'choice_label'  => 'name',
+                    'documentation' => [
+                        'type'        => 'string',
+                        'description' => 'The brand of the product'
+                    ]
+                ]
+            );
     }
 
     /**
@@ -39,8 +73,11 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Product::class,
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class'      => Product::class,
+                'csrf_protection' => false
+            ]
+        );
     }
 }

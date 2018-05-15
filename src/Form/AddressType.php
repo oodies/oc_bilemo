@@ -60,7 +60,8 @@ class AddressType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Address::class,
+                'data_class'      => Address::class,
+                'csrf_protection' => false
             ]
         );
     }

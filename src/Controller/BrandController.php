@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Brand;
+use App\Form\BrandType;
 use App\Manager\BrandManager;
 use App\Services\Paginate\Brand as PaginateBrand;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -102,9 +103,6 @@ class BrandController extends Controller
      * @param int          $idBrand
      * @param BrandManager $brandManager
      *
-     * @return Brand|null
-     *
-     * @throws NotFoundHttpException
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
@@ -117,6 +115,9 @@ class BrandController extends Controller
      *
      * @Rest\View(serializerGroups={"Default"})
      *
+     * @return Brand|null
+     *
+     * @throws NotFoundHttpException
      */
     public function getAction(int $idBrand, BrandManager $brandManager)
     {
@@ -141,10 +142,21 @@ class BrandController extends Controller
      *
      * @ParamConverter("brand", converter="fos_rest.request_body")
      *
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="Brand",
+     *     @SWG\Schema(
+     *          ref=@Model(type=BrandType::class, groups={"Default"} )
+     *      )
+     * )
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
      *     @Model(type=Brand::class, groups={"Default"} )
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when submitted data is invalid"
      * )
      *
      * @Rest\View(serializerGroups={"Default"})
@@ -166,9 +178,9 @@ class BrandController extends Controller
     }
 
     /**
-     * @TODO à revoir
-     *
      * Complete change of brand data
+     *
+     * TODO à revoir
      *
      * @Security("has_role('ROLE_API_USER')")
      *
@@ -182,10 +194,15 @@ class BrandController extends Controller
      * @param BrandManager            $brandManager
      * @param ConstraintViolationList $violationList
      *
-     * @return RestView
      * @ParamConverter("brand", options={"id"="idBrand"} )
-     * --ParamConverter("brand", converter="fos_rest.request_body")*
      *
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="Brand",
+     *     @SWG\Schema(
+     *          ref=@Model(type=BrandType::class, groups={"Default"} )
+     *      )
+     * )
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
@@ -200,6 +217,7 @@ class BrandController extends Controller
      *     description="Returned when the brand is not found"
      * )
      *
+     * @return RestView
      */
     public function putAction(
         Brand $brand,
@@ -216,9 +234,9 @@ class BrandController extends Controller
     }
 
     /**
-     * TODO à Revoir
-     *
      * Partial change of brand data
+     *
+     * TODO à Revoir
      *
      * @Security("has_role('ROLE_API_USER')")
      *
@@ -233,6 +251,13 @@ class BrandController extends Controller
      *
      * @ParamConverter("brand", options={"id"="idBrand"} )
      *
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="Brand",
+     *     @SWG\Schema(
+     *          ref=@Model(type=BrandType::class, groups={"Default"} )
+     *      )
+     * )
      * @SWG\Response(
      *     response="200",
      *     description="Returned when successful",
@@ -282,6 +307,8 @@ class BrandController extends Controller
      * )
      *
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     *
+     * @throws NotFoundHttpException
      */
     public function removeAction(int $idBrand, BrandManager $brandManager)
     {

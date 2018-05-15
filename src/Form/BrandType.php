@@ -30,11 +30,11 @@ class BrandType extends AbstractType
         $builder
             ->add(
                 'name', TextType::class, [
-                'documentation' => [
-                    'type'        => 'string',
-                    'description' => 'the name of the brand'
-                ]
-            ]
+                          'documentation' => [
+                              'type'        => 'string',
+                              'description' => 'the name of the brand'
+                          ]
+                      ]
             );
     }
 
@@ -47,7 +47,8 @@ class BrandType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Brand::class,
+                'data_class'      => Brand::class,
+                'csrf_protection' => false
             ]
         );
     }

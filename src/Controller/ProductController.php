@@ -129,9 +129,9 @@ class ProductController extends Controller
     }
 
     /**
-     * TODO à revoir
-     *
      * Create a new product
+     *
+     * TODO à revoir
      *
      * @Security("has_role('ROLE_API_USER')")
      *
@@ -141,13 +141,24 @@ class ProductController extends Controller
      * @param ProductManager $productManager
      * @param Translator     $translator
      *
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="product",
+     *     @SWG\Schema(
+     *          ref=@Model(type=ProductType::class, groups={"Default", "Details"} )
+     *      )
+     * )
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
-     *     @Model(type=Product::class, groups={"Default"} )
+     *     @Model(type=Product::class, groups={"Default", "Details"} )
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when submitted data is invalid"
      * )
      *
-     * @Rest\View(serializerGroups={"Default"})
+     * @Rest\View(serializerGroups={"Default", "Details"})
      *
      * @return RestView
      *
