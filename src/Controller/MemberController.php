@@ -108,7 +108,8 @@ class MemberController extends Controller
      *     requirements={"idPerson"="\d+" }
      * )
      *
-     * @param Member $member
+     * @param int           $idPerson
+     * @param MemberManager $memberManager
      *
      * @ParamConverter("member", options={"id": "idPerson"} )
      *
@@ -116,6 +117,10 @@ class MemberController extends Controller
      *     response="200",
      *     description="Returned when successful",
      *     @Model(type=Member::class, groups={"Default", "Details"} )
+     * )
+     * @SWG\Response(
+     *     response="404",
+     *     description="Returned when the member is not found"
      * )
      *
      * @Rest\View(serializerGroups={"Default", "Details"})
@@ -128,7 +133,7 @@ class MemberController extends Controller
     {
         $member = $memberManager->find($idPerson);
         if (empty($member)) {
-            throw new NotFoundHttpException('Unknown indentifier');
+            throw new NotFoundHttpException('Unknown identifier');
         }
 
         return $member;
@@ -150,18 +155,23 @@ class MemberController extends Controller
      * @ParamConverter("member", converter="fos_rest.request_body")
      *
      * @SWG\Parameter(
-     *     in="formData",
+     *     in="body",
      *     name="member",
-     *     type="array",
-     *     @Model(type=MemberType::class, groups={"Default"} )
+     *     @SWG\Schema(
+     *          ref=@Model(type=MemberType::class, groups={"Default", "Details"} )
+     *      )
      * )
      * @SWG\Response(
      *     response="201",
      *     description="Create successfully",
-     *     @Model(type=Member::class, groups={"Default"} )
+     *     @Model(type=Member::class, groups={"Default", "Details"} )
+     * )
+     * @SWG\Response(
+     *     response="400",
+     *     description="Returned when submitted data is invalid"
      * )
      *
-     * @Rest\View(serializerGroups={"Default"})
+     * @Rest\View(serializerGroups={"Default", "Details"})
      *
      * @return RestView
      */
@@ -184,9 +194,10 @@ class MemberController extends Controller
     }
 
     /**
-     * TODO à revoir
-     *
      * Partial change of member data
+     *
+     *
+     * TODO à revoir
      *
      * @Security("has_role('ROLE_API_USER')")
      *
