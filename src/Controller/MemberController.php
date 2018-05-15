@@ -12,6 +12,7 @@ use App\Entity\Member;
 use App\Form\MemberType;
 use App\Manager\MemberManager;
 use App\Services\Paginate\Member as PaginateMember;
+use App\Services\ViewErrorsHelper;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
@@ -203,8 +204,9 @@ class MemberController extends Controller
      *     requirements={"id"="\d+"}
      * )
      *
-     * @param Request       $request
-     * @param MemberManager $memberManager
+     * @param Request          $request
+     * @param MemberManager    $memberManager
+     * @param ViewErrorsHelper $viewErrorsHelper
      *
      * @SWG\Parameter(
      *     in="body",
@@ -229,17 +231,18 @@ class MemberController extends Controller
      *
      * @return RestView
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
-     * @throws \LogicException
-     * @throws \Symfony\Component\Form\Exception\LogicException
      * @throws NotFoundHttpException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \Symfony\Component\Form\Exception\LogicException
      */
     public function patchAction(
         Request $request,
-        MemberManager $memberManager
+        MemberManager $memberManager,
+        ViewErrorsHelper $viewErrorsHelper
     ): RestView {
-        return $this->updateResource($request, $memberManager, false);
+        return $this->updateResource($request, $memberManager, false, $viewErrorsHelper);
     }
 
     /**
@@ -253,8 +256,9 @@ class MemberController extends Controller
      *     requirements={"id"="\d+"}
      * )
      *
-     * @param Request       $request
-     * @param MemberManager $memberManager
+     * @param Request          $request
+     * @param MemberManager    $memberManager
+     * @param ViewErrorsHelper $viewErrorsHelper
      *
      * @SWG\Parameter(
      *     in="body",
@@ -279,18 +283,19 @@ class MemberController extends Controller
      *
      * @return RestView
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException*
-     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
-     * @throws \LogicException
-     * @throws \Symfony\Component\Form\Exception\LogicException
-     * @throws \LogicException
      * @throws NotFoundHttpException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     public function putAction(
         Request $request,
-        MemberManager $memberManager
+        MemberManager $memberManager,
+        ViewErrorsHelper $viewErrorsHelper
     ): RestView {
-        return $this->updateResource($request, $memberManager, true);
+        return $this->updateResource($request, $memberManager, true, $viewErrorsHelper);
     }
 
 
@@ -339,22 +344,26 @@ class MemberController extends Controller
     }
 
     /**
-     * @param Request       $request
-     * @param MemberManager $memberManager
-     * @param bool          $clearMissing
+     * @param Request          $request
+     * @param MemberManager    $memberManager
+     * @param bool             $clearMissing
+     *
+     * @param ViewErrorsHelper $viewErrorsHelper
      *
      * @return RestView
      *
+     * @throws NotFoundHttpException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \LogicException
      * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
      * @throws \Symfony\Component\Form\Exception\LogicException
-     * @throws NotFoundHttpException
-     * @throws \LogicException
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Symfony\Component\Translation\Exception\InvalidArgumentException
      */
     private function updateResource(
         Request $request,
         MemberManager $memberManager,
-        bool $clearMissing
+        bool $clearMissing,
+        ViewErrorsHelper $viewErrorsHelper
     ) {
         $member = $memberManager->findOneByCustomer($request->get('id'), $this->getUser()->getCustomer());
         if (empty($member)) {
@@ -369,6 +378,9 @@ class MemberController extends Controller
             return RestView::create($member, Response::HTTP_CREATED);
         }
 
-        return RestView::create(['errors' => $form], Response::HTTP_BAD_REQUEST);
+        return RestView::create(
+            ['errors' => $errors = $viewErrorsHelper->getErrors($form)],
+            Response::HTTP_BAD_REQUEST
+        );
     }
 }
