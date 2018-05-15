@@ -24,6 +24,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
 class UserFixtures extends Fixture implements ContainerAwareInterface, DependentFixtureInterface
 {
 
+    /** *******************************
+     *  PROPERTIES
+     */
+
     /**
      * @var ContainerInterface
      */
@@ -34,6 +38,9 @@ class UserFixtures extends Fixture implements ContainerAwareInterface, Dependent
      */
     protected $encoder;
 
+    /** *******************************
+     *  METHODS
+     */
 
     /**
      * @inheritDoc
@@ -59,7 +66,6 @@ class UserFixtures extends Fixture implements ContainerAwareInterface, Dependent
              ->setEmail('customer1@mail.com')
              ->setFirstname('firstname')
              ->setLastname('lastname')
-             ->setApiKey('APIKEY')
              ->setRoles(['ROLE_API_USER']);
 
         $hashPassword = $this->encoder->encodePassword($user, '12345');

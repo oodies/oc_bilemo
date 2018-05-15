@@ -309,10 +309,9 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
      */
     protected $roles = [];
 
-    /**
-     * @ORM\Column(type="string", unique=true)
+    /** *******************************
+     *  ASSOCIATION MAPPING
      */
-    protected $apiKey;
 
     /**
      * @var Customer
@@ -589,25 +588,6 @@ class User implements AdvancedUserInterface, \Serializable, UserProviderInterfac
     public function setRoles(array $roles): User
     {
         $this->roles = $roles;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getApiKey()
-    {
-        return $this->apiKey;
-    }
-
-    /**
-     * @param mixed $apiKey
-     *
-     * @return User
-     */
-    public function setApiKey($apiKey)
-    {
-        $this->apiKey = $apiKey;
         return $this;
     }
 
