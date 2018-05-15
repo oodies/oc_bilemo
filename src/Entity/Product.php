@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "self",
  *     href = @Hateoas\Route("app_api_product_get",
  *            absolute=true,
- *            parameters={ "idProduct" = "expr(object.getId())" }
+ *            parameters={ "id" = "expr(object.getId())" }
  *     ) )
  */
 class Product
