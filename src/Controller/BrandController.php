@@ -180,8 +180,6 @@ class BrandController extends Controller
     /**
      * Complete change of brand data
      *
-     * TODO à revoir
-     *
      * @Security("has_role('ROLE_API_USER')")
      *
      * @Rest\Put(
@@ -190,11 +188,8 @@ class BrandController extends Controller
      *     requirements={"idBrand"="\d+"}
      * )
      *
-     * @param Brand                   $brand
-     * @param BrandManager            $brandManager
-     * @param ConstraintViolationList $violationList
-     *
-     * @ParamConverter("brand", options={"id"="idBrand"} )
+     * @param Request      $request
+     * @param BrandManager $brandManager
      *
      * @SWG\Parameter(
      *     in="body",
@@ -218,25 +213,22 @@ class BrandController extends Controller
      * )
      *
      * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \LogicException
+     * @throws NotFoundHttpException
      */
     public function putAction(
-        Brand $brand,
-        BrandManager $brandManager,
-        ConstraintViolationList $violationList
+        Request $request,
+        BrandManager $brandManager
     ): RestView {
-        if (count($violationList)) {
-            return RestView::create(['errors' => $violationList], Response::HTTP_BAD_REQUEST);
-        }
-
-        $brandManager->add($brand);
-
-        return RestView::create(['resource' => $brand], Response::HTTP_CREATED);
+        return $this->updateResource($request, $brandManager, true);
     }
 
     /**
      * Partial change of brand data
-     *
-     * TODO à Revoir
      *
      * @Security("has_role('ROLE_API_USER')")
      *
@@ -246,10 +238,8 @@ class BrandController extends Controller
      *     requirements={"idBrand"="\d+"}
      * )
      *
-     * @param Request $request
-     * @param Brand   $brand
-     *
-     * @ParamConverter("brand", options={"id"="idBrand"} )
+     * @param Request      $request
+     * @param BrandManager $brandManager
      *
      * @SWG\Parameter(
      *     in="body",
@@ -271,11 +261,20 @@ class BrandController extends Controller
      *     response="404",
      *     description="Returned when the brand is not found"
      * )
+     *
+     * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \LogicException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws \LogicException
+     * @throws NotFoundHttpException
      */
-    public function patchAction(Request $request, Brand $brand)
-    {
-        //return $this->updateResource($request, $brand, false);
-
+    public function patchAction(
+        Request $request,
+        BrandManager $brandManager
+    ) {
+        return $this->updateResource($request, $brandManager, false);
     }
 
     /**
@@ -319,5 +318,38 @@ class BrandController extends Controller
         }
 
         $brandManager->remove($idBrand);
+    }
+
+    /**
+     * @param Request      $request
+     * @param BrandManager $brandManager
+     * @param bool         $clearMissing
+     *
+     * @return RestView
+     *
+     * @throws \Symfony\Component\Form\Exception\AlreadySubmittedException
+     * @throws \Symfony\Component\Form\Exception\LogicException
+     * @throws NotFoundHttpException
+     * @throws \LogicException
+     */
+    private function updateResource(
+        Request $request,
+        BrandManager $brandManager,
+        bool $clearMissing
+    ) {
+        $brand = $brandManager->find($request->get('idBrand'));
+        if (empty($brand)) {
+            throw new NotFoundHttpException('Unknown identifier');
+        }
+
+        $form = $this->createForm(BrandType::class, $brand);
+        $form->submit(json_decode($request->getContent(), true), $clearMissing);
+
+        if ($form->isValid()) {
+            $brandManager->add($brand);
+            return RestView::create($brand, Response::HTTP_CREATED);
+        }
+
+        return RestView::create(['errors' => $form->getErrors()], Response::HTTP_BAD_REQUEST);
     }
 }
