@@ -5,12 +5,32 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+            <style type="text/css">
+                html {
+                    height: 100%;
+                }
+                body {
+                    height: 100%;
+                }
+                .v-container {
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .form-signin {
+                    width: 100%;
+                    max-width: 420px;
+                    padding: 15px;
+                    margin: 0 auto;
+                }
+            </style>
         {% endblock %}
     </head>
     <body>
-        <div class="container">
         {% block body %}{% endblock body %}
-        </div>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

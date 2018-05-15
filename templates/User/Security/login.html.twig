@@ -1,17 +1,24 @@
 {% extends "base.html.twig" %}
 {% trans_default_domain 'application' %}
 {% block body %}
-<div class="form-user-form">
-    {{ form_start(form) }}
-    {{ form_row(form._username) }}
-    {{ form_row(form._password) }}
-    {{ form_rest(form) }}
-    <input type="submit" id="_submit" name="_submit" value="{{ 'login.submit.label'|trans|upper }}"
-           class="btn btn-lg btn-primary btn-block" tabindex="3">
-    {{ form_end(form) }}
-    {% if error %}
-        <div class="alert alert-danger" role="alert">
-            <div>{{ 'login.error'|trans|nl2br }}</div>
+    <div class="container v-container">
+        <div class="form-user-title text-center">
+            <h2>Connexion</h2>
         </div>
-    {% endif %}
-    {% endblock body %}
+        <div class="form-signin">
+            {{ form_start(form) }}
+            {{ form_label(form._username) }}
+            {{ form_widget(form._username) }}
+            {{ form_row(form._password) }}
+            {{ form_rest(form) }}
+            <input type="submit" id="_submit" name="_submit" value="{{ 'login.submit.label'|trans|upper }}"
+                   class="btn btn-lg btn-primary btn-block" tabindex="3">
+            {{ form_end(form) }}
+            {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    <div>{{ 'login.error'|trans|nl2br }}</div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock body %}
