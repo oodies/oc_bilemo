@@ -6,7 +6,7 @@
  * @since 2018/04
  */
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Entity\Member;
 use App\Form\MemberType;
@@ -31,7 +31,7 @@ use Swagger\Annotations as SWG;
 /**
  * Class MemberController
  *
- * @package App\Controller
+ * @package App\Controller\Api
  */
 class MemberController extends Controller
 {

@@ -6,7 +6,7 @@
  * @since 2018/04
  */
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Entity\Product;
 use App\Manager\ProductManager;
@@ -23,7 +23,7 @@ use Swagger\Annotations as SWG;
 /**
  * Class ProductController
  *
- * @package App\Controller
+ * @package App\Controller\Api
  */
 class ProductController extends Controller
 {
