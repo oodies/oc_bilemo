@@ -11,6 +11,7 @@ namespace App\EventSubscriber;
 use App\Normalizer\NormalizerInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -33,6 +34,22 @@ class ExceptionSubscriber implements EventSubscriberInterface
      */
     private $normalizers;
 
+    /**
+     * @var RequestContextAwareInterface $routing
+     */
+    private $routing;
+
+    /**
+     * ExceptionSubscriber constructor.
+     *
+     * @param SerializerInterface          $serializer
+     * @param RequestContextAwareInterface $routing
+     */
+    public function __construct(SerializerInterface $serializer, RequestContextAwareInterface $routing)
+    {
+        $this->serializer = $serializer;
+        $this->routing = $routing;
+    }
 
     /**
      * @inheritDoc
@@ -44,17 +61,6 @@ class ExceptionSubscriber implements EventSubscriberInterface
         ];
     }
 
-
-    /**
-     * ExceptionSubscriber constructor.
-     *
-     * @param SerializerInterface $serializer
-     */
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
-    }
-
     /**
      * @param GetResponseForExceptionEvent $event
      *
@@ -62,31 +68,32 @@ class ExceptionSubscriber implements EventSubscriberInterface
      */
     public function processException(GetResponseForExceptionEvent $event)
     {
-        /**
-         *
-         */
-        $result = null;
+        if (preg_match("%^/api/%", $this->routing->getContext()->getPathInfo())) {
 
-        foreach ($this->normalizers as $normalizer) {
-            /** @var NormalizerInterface $normalizer */
-            if ($normalizer->supports($event->getException())) {
-                $result = $normalizer->normalize($event->getException());
-                break;
+            $result = null;
+
+            foreach ($this->normalizers as $normalizer) {
+                /** @var NormalizerInterface $normalizer */
+                if ($normalizer->supports($event->getException())) {
+                    $result = $normalizer->normalize($event->getException());
+                    break;
+                }
             }
+
+            if (null == $result) {
+                return;
+                $result['code'] = Response::HTTP_BAD_REQUEST;
+
+                $result['body'] = [
+                    'code'    => Response::HTTP_BAD_REQUEST,
+                    'message' => $event->getException()->getMessage()
+                ];
+            }
+
+            $body = $this->serializer->serialize($result['body'], 'json');
+
+            $event->setResponse(new Response($body, $result['code']));
         }
-
-        if (null == $result) {
-            $result['code'] = Response::HTTP_BAD_REQUEST;
-
-            $result['body'] = [
-                'code'    => Response::HTTP_BAD_REQUEST,
-                'message' => $event->getException()->getMessage()
-            ];
-        }
-
-        $body = $this->serializer->serialize($result['body'], 'json');
-
-        $event->setResponse(new Response($body, $result['code']));
     }
 
     /**
