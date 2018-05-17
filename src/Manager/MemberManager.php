@@ -8,11 +8,12 @@
 
 namespace App\Manager;
 
-use App\Entity\Customer;
 use App\Entity\Member;
+use App\Entity\User\User;
 use App\Repository\MemberRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Class MemberManager
@@ -35,6 +36,11 @@ class MemberManager
      */
     protected $em;
 
+    /**
+     * @var TokenStorageInterface $tokenStorage
+     */
+    protected $tokenStorage;
+
     /** *******************************
      *  METHODS
      */
@@ -44,11 +50,16 @@ class MemberManager
      *
      * @param EntityManagerInterface $em
      * @param MemberRepository       $memberRepository
+     * @param TokenStorageInterface  $tokenStorage
      */
-    public function __construct(EntityManagerInterface $em, MemberRepository $memberRepository)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        MemberRepository $memberRepository,
+        TokenStorageInterface $tokenStorage
+    ) {
         $this->em = $em;
         $this->repository = $memberRepository;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -62,21 +73,20 @@ class MemberManager
     }
 
     /**
-     * @param int      $id
-     * @param Customer $customer
+     * @param int $id
      *
      * @return Member|null
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByCustomer(int $id, Customer $customer)
+    public function findOneByCustomer(int $id)
     {
-        return $this->repository->findOneByCustomer($id, $customer);
+
+        return $this->repository->findOneByCustomer($id, $this->getUser()->getCustomer());
     }
 
     /**
      *
-     * @param Customer $customer
      * @param          $mawPerPage
      * @param          $currentPage
      *
@@ -84,9 +94,11 @@ class MemberManager
      *
      * @throws \LogicException
      */
-    public function findByCustomerWithPaginate(Customer $customer, $mawPerPage, $currentPage): Pagerfanta
+    public function findByCustomerWithPaginate($mawPerPage, $currentPage): Pagerfanta
     {
-        return $this->repository->findByCustomerWithPaginate($customer, $mawPerPage, $currentPage);
+        return $this->repository->findByCustomerWithPaginate(
+            $this->getUser()->getCustomer(), $mawPerPage, $currentPage
+        );
     }
 
     /**
@@ -113,5 +125,13 @@ class MemberManager
             $this->em->remove($member);
             $this->em->flush();
         }
+    }
+
+    /**
+     * @return User
+     */
+    protected function getUser(): User
+    {
+        return $this->tokenStorage->getToken()->getUser();
     }
 }
