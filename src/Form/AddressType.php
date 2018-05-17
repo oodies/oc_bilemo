@@ -23,7 +23,7 @@ class AddressType extends AbstractType
     {
         $builder
             ->add(
-                'streetAddress', TextType::class,
+                'street_address', TextType::class,
                 [
                     'documentation' => [
                         'type'        => 'string',

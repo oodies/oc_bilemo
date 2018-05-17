@@ -39,7 +39,7 @@ class MemberType extends AbstractType
                           ]
             )
             ->add(
-                'cellPhone', TextType::class, [
+                'cell_phone', TextType::class, [
                                'documentation' => [
                                    'type'        => 'string',
                                    'description' => 'The cell phone of the person'
