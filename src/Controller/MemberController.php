@@ -88,7 +88,6 @@ class MemberController extends Controller
     ) {
         /** @var Pagerfanta $pager */
         $pagerfanta = $memberManager->findByCustomerWithPaginate(
-            $this->getUser()->getCustomer(),
             $paramFetcher->get('max_per_page'),
             $paramFetcher->get('page')
         );
@@ -126,13 +125,12 @@ class MemberController extends Controller
      *
      * @throws NotFoundHttpException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \LogicException
      */
     public function getAction(
         int $id,
         MemberManager $memberManager
     ) {
-        $member = $memberManager->findOneByCustomer($id, $this->getUser()->getCustomer());
+        $member = $memberManager->findOneByCustomer($id);
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }
@@ -329,12 +327,11 @@ class MemberController extends Controller
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @throws \LogicException
      * @throws NotFoundHttpException
      */
     public function removeAction(int $id, MemberManager $memberManager)
     {
-        $member = $memberManager->findOneByCustomer($id, $this->getUser()->getCustomer());
+        $member = $memberManager->findOneByCustomer($id);
 
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
@@ -365,7 +362,7 @@ class MemberController extends Controller
         bool $clearMissing,
         ViewErrorsHelper $viewErrorsHelper
     ) {
-        $member = $memberManager->findOneByCustomer($request->get('id'), $this->getUser()->getCustomer());
+        $member = $memberManager->findOneByCustomer($request->get('id'));
         if (empty($member)) {
             throw new NotFoundHttpException('Unknown identifier');
         }
