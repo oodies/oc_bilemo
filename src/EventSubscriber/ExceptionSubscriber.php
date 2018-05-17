@@ -81,7 +81,6 @@ class ExceptionSubscriber implements EventSubscriberInterface
             }
 
             if (null == $result) {
-                return;
                 $result['code'] = Response::HTTP_BAD_REQUEST;
 
                 $result['body'] = [
