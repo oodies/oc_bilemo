@@ -56,7 +56,7 @@ class Brand
      * @ORM\Column(
      *     name="name",
      *     type="string",
-     *     length=255,
+     *     length=40,
      *     nullable=false,
      *     unique=true,
      *     options={"comment"="Contains the name of the brand"}
@@ -66,7 +66,7 @@ class Brand
      *      message="brand.name.not_blank"
      * )
      * @Assert\Length(
-     *          max=255,
+     *          max=40,
      *          maxMessage="brand.name.max_length"
      * )
      *
