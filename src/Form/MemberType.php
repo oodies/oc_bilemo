@@ -40,17 +40,17 @@ class MemberType extends AbstractType
             )
             ->add(
                 'cell_phone', TextType::class, [
-                               'documentation' => [
-                                   'type'        => 'string',
-                                   'description' => 'The cell phone of the person'
-                               ]
-                           ]
+                                'documentation' => [
+                                    'type'        => 'string',
+                                    'description' => 'The cell phone of the person'
+                                ]
+                            ]
             )
+            // https://swagger.io/docs/specification/data-models/data-types/
             ->add(
                 'address', AddressType::class, [
                              'documentation' => [
-                                 'type'        => 'string',
-                                 'description' => 'The address of the person'
+                                 '$ref' => '#/components/schemas/Address'
                              ]
                          ]
             );
