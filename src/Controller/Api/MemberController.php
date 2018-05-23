@@ -155,7 +155,7 @@ class MemberController extends Controller
      *     in="body",
      *     name="member",
      *     @SWG\Schema(
-     *          ref=@Model(type=MemberType::class, groups={"Default", "Details"} )
+     *          ref=@Model(type=MemberType::class)
      *      )
      * )
      * @SWG\Response(
@@ -210,7 +210,7 @@ class MemberController extends Controller
      *     in="body",
      *     name="Member",
      *     @SWG\Schema(
-     *          ref=@Model(type=MemberType::class, groups={"Default","Details"} )
+     *          ref=@Model(type=MemberType::class)
      *      )
      * )
      * @SWG\Response(
@@ -262,7 +262,7 @@ class MemberController extends Controller
      *     in="body",
      *     name="Member",
      *     @SWG\Schema(
-     *          ref=@Model(type=MemberType::class, groups={"Default","Details"} )
+     *          ref=@Model(type=MemberType::class)
      *      )
      * )
      * @SWG\Response(
