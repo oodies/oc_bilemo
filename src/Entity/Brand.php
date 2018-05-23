@@ -66,7 +66,7 @@ class Brand
      *      message="brand.name.not_blank"
      * )
      * @Assert\Length(
-     *          max="255",
+     *          max=255,
      *          maxMessage="brand.name.max_length"
      * )
      *

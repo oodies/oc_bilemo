@@ -65,7 +65,7 @@ class Product
      *         message="product.name.not_blank"
      * )
      * @Assert\Length(
-     *     max="255",
+     *     max=255,
      *     maxMessage="product.name.max_length"
      * )
      *
@@ -87,7 +87,7 @@ class Product
      * )
      *
      * @Assert\Length(
-     *     max="64",
+     *     max=64,
      *     maxMessage="product.code.max_length"
      * )
      *

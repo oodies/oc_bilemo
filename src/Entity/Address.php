@@ -56,7 +56,7 @@ class Address
      * )
      *
      * @Assert\Length(
-     *          max="255",
+     *          max=255,
      *          maxMessage="address.street_address.max_length"
      * )
      *
@@ -79,7 +79,7 @@ class Address
      * )
      *
      * @Assert\Length(
-     *          max="70",
+     *          max=70,
      *          maxMessage="address.city.max_length"
      * )
      *
@@ -102,7 +102,7 @@ class Address
      * )
      *
      * @Assert\Length(
-     *          max="10",
+     *          max=10,
      *          maxMessage="address.postcode.max_length"
      * )
      *
