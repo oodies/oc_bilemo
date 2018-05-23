@@ -108,7 +108,7 @@ abstract class Person
      * )
      *
      * @Assert\Length(
-     *     max="30",
+     *     max=30,
      *     maxMessage="person.cell_phone.max_length"
      * )
      *
