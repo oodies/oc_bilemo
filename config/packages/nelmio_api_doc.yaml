@@ -7,11 +7,7 @@ nelmio_api_doc:
             contact:
                 name: "API Bilemo"
                 url: "http://bilemo.oodie.fr"
-                email: "support@bilemo.fr"
-            license:
-                name: "MIT"
-                url: "https://opensource.org/licenses/MIT"
-            version: 0.0.1
+            version: 1.0.0
         securityDefinitions:
             Bearer:
                 type: apiKey
