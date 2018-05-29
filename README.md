@@ -56,7 +56,7 @@ php bin/console doctrine:schema:update --force
 ### 3 - Fixtures of data
 From **/my_project/**
 ```console
-php bin/console doctrine:fixtures:load
+php bin/console doctrine:fixture:load
 ```
 
 ### 4 - Preparation
@@ -92,7 +92,7 @@ JWT_TTL=3600
 
 ## VirtualHost
 
-```ApacheConfig
+```Apache
 <VirtualHost *:80>
 	ServerName oc_bilemo.local
 	DocumentRoot "path/to/my/project/public"
@@ -108,9 +108,8 @@ JWT_TTL=3600
 			RewriteEngine On
 			RewriteCond %{HTTP:Authorization} ^(.*)
 			RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]						
-			RewriteCond %{REQUEST_FILENAME} -f
-			RewriteRule ^ - [L]
-			RewriteRule ^ index.php [L]
+			RewriteCond %{REQUEST_FILENAME} !-f
+			RewriteRule ^(.*)$ index.php [QSA,L]
 		</IfModule>
 	</Directory>
 	ErrorLog logs/oc_bilemo-error.log
@@ -122,35 +121,25 @@ JWT_TTL=3600
 
 ### Authentication
 
-For be authentified you need to obtain an access token from JWT.
+For be authentified to API you need to obtain an access token from JWT. There are two options with this test user:
 
-For obtained this token you need to connect with your username and you password on Json Format on this url : **/apilogin**.
-Use [POSTMAN](https://www.getpostman.com)
-> **POST** http://oc_bilemo.local/apilogin
->> body : chosen 'raw' JSON and write
-
-```json
 { 
     "username": "customer_1",
     "password": "12345"
 }
-```
-Send the request and recevied the token
+
+#### Use APIDoc
+
+From **http://oc_bilemo.local/apidoc** and **POST /api/login** sandbox.
+Give username, password value and execute to get the token as follows.
 ```json
 {
-    "token": "eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FQSV9VU0VSIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJfMSIsImlhdCI6MTUyNzA3NTMyMiwiZXhwIjoxNTI3MDc4OTIyfQ.Q0boOWli_pNPZmby6WZp08_Ks8970Zjt1pqt6XOz5nt-NtZKEvPI51ErTkMLhxUtGqEadYvGJIyQ-xtd_HdNsTIhzSUV4BzC6R2_Wgt7Cmq7B1XPmDyQAyC_6XjMgSSjhO8QhNOFdLQ5B0ybHQBbhbya9Vz3URc6jQmihdq4jK9w_JwK_5IidOgECJOCTMF9IyEgVRSsH50zEzpFfFkXUahZ97g_O8NZYYARlEy5JLxhAgr7Aj_G-YDSrdlD939yFDL1mZdawhdKSAuqeC-2krJnILMMCtn6V8MJEnOCr59LDxWNi3Ucw4GbdebXzOPDObo9oPlVgfwYf3bniYfOZPQHPUO3XbgfHQegJd8SwOiiQKOb9JszD_aERGH7HNWasa94sq_tp2Inooh5rZG6siLl3iI0oceTeTM5ynelK_ZflYRYppUM2YvGZqkkXkG1mrBTi9CRH3FGIY86yEoZTSmI4dJ80ahJW_g38H1aJBfcnqSiu8-Ix5egs-qdhtQj28wPoFJIFfr7HXoVaR3lXHyTMfKmtYjUgiwF0jzf-b1XIy68Ro_OCUKS4xLnHvPm_nqoQBCFtAZ2Ps5mmf1l86Ux4lSOSebzT8ToSSdNKR-MfZnEh_NsmKDLulEgb_MTLJPrBGGaAEVzKsw_-DrdOpDZViAu8l50YvKPuh5f-kw"
+    "token": "eyJhbGciOiJSUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FQSV9VU0VSIl0sInVzZXJuYW1lIjoiY3VzdG9tZXJfMSIsImlhdCI6MTUyNzA3NTMyMiwiZXhwIjoxNTI3MDc4OTIyfQ.Q0boOWli_pNPZmby6WZp08_Ks8970Zjt1pqt6XOz5nt-NtZKEvPI51ErTkMLhxUtGqEadYvGJIyQ ..."
 }
 ```
 
-------------------------------------------
-Or from the frontend on this url : **/login** then **/tokens** to obtained this token.
+#### Use the frontend
+From the frontend on this url : **/login** then **/tokens** to obtained this token.
 
 ### API Document
-
 [Screenshot ApiDoc](/doc/img/screenshot-ApiDoc.png)
-
-
-
-
-
-
